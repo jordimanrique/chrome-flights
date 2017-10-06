@@ -9,7 +9,7 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "persistent": false,
+    "persistent": true,
     "scripts": ["js/background.js"]
   },
   "content_scripts": [
@@ -20,6 +20,8 @@
   ],
   "permissions": [
     "activeTab",
-    "declarativeContent"
+    "declarativeContent",
+    "webRequest",
+    "*://*.atrapalo.com/*"
   ]
 }
