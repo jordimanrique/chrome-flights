@@ -4,13 +4,22 @@
   "name": "Atrapalo Flights",
   "description": "Atrapalo Flights",
   "version": "1.0",
-
-  "browser_action": {
+  "page_action": {
     "default_icon": "aeroplane_128.png",
     "default_popup": "popup.html"
   },
+  "background": {
+    "persistent": false,
+    "scripts": ["js/background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.atrapalo.com/vuelos/resultados_ajax/*"],
+      "js": ["js/contentScript.js"]
+    }
+  ],
   "permissions": [
     "activeTab",
-    "storage"
+    "declarativeContent"
   ]
 }
