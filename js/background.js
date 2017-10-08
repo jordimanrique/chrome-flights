@@ -42,10 +42,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                     return response.json(); 
                 }).then((data) => {
                     storage.set({'results': data}, function() {
-                        sendMessage({
-                            type:'NEW_RESULTS',
-                            payload: data
-                        });
+                        sendMessage({type:'NEW_RESULTS'});
                     });
                 });
             }
