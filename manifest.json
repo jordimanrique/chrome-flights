@@ -22,6 +22,7 @@
     "activeTab",
     "declarativeContent",
     "webRequest",
-    "*://*.atrapalo.com/*"
+    "*://*.atrapalo.com/*",
+    "storage"
   ]
 }

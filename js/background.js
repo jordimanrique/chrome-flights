@@ -1,3 +1,5 @@
+let storage = chrome.storage.local;
+
 chrome.runtime.onInstalled.addListener(() =>  {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
         chrome.declarativeContent.onPageChanged.addRules([
@@ -30,6 +32,8 @@ chrome.webRequest.onBeforeRequest.addListener(
             var formData = details.requestBody.formData;
             var url = details.url + '?_ce=true';
 
+            storage.set({'results': {}});
+
             if (formData) {
                 fetch(url, {
                     method : details.method,
@@ -37,9 +41,11 @@ chrome.webRequest.onBeforeRequest.addListener(
                 }).then((response) => {
                     return response.json(); 
                 }).then((data) => {
-                    sendMessage({
-                        type:'NEW_RESULTS',
-                        payload: data
+                    storage.set({'results': data}, function() {
+                        sendMessage({
+                            type:'NEW_RESULTS',
+                            payload: data
+                        });
                     });
                 });
             }
@@ -55,7 +61,14 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 function sendMessage(message) {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    console.log(tabs);
     lastTabId = tabs[0].id;
     chrome.tabs.sendMessage(lastTabId, message);
   });
 }
+
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+
