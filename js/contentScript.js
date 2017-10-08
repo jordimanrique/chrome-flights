@@ -24,6 +24,20 @@ function populateTitles() {
 				};
 
 				if (type === 'packages') {
+					combi[type].forEach((package) => {
+						let transports = package.transports;
+						Object.keys(transports).forEach((key) => {
+							transports[key].forEach((transport) => {
+								prev[transport.id] = {
+									provider: transport.provider,
+									id: transport.id,
+									type: combi.type,
+									plating_carrier: transport.plating_carrier
+								};
+							});
+						});
+					});
+
 					return prev;
 				}
 
