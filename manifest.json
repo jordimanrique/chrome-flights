@@ -14,7 +14,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.atrapalo.com/vuelos/resultados_ajax/*"],
+      "matches": ["*://*/vuelos/resultados_ajax/*"],
       "js": ["js/jquery.js","js/contentScript.js"]
     }
   ],
@@ -22,7 +22,7 @@
     "activeTab",
     "declarativeContent",
     "webRequest",
-    "*://*.atrapalo.com/*",
+    "*://*/apitransport/*",
     "storage"
   ]
 }

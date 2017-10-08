@@ -52,7 +52,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         }
     },
     {
-        urls: ["*://*.atrapalo.com/apitransport/combinations"], 
+        urls: ["*://*/apitransport/combinations"], 
         types:["xmlhttprequest"]
     },
     ["requestBody"]
