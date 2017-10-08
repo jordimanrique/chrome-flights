@@ -48,7 +48,9 @@
 				"oneway":1,
 				"resident":1,
 				"largeFamily":"",
-				"journeys":["BCN-MAD-16\/10\/2017-VY"],"carriers":""}],
+				"journeys":["BCN-MAD-16\/10\/2017-VY"],
+				"carriers":""
+			}],
 		"status":{
 			"status":"COMPLETED",
 			"status_time":4,

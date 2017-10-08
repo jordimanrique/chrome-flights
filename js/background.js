@@ -66,9 +66,3 @@ function sendMessage(message) {
     chrome.tabs.sendMessage(lastTabId, message);
   });
 }
-
-function sleep (time) {
-  return new Promise((resolve) => setTimeout(resolve, time));
-}
-
-

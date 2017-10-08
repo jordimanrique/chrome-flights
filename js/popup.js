@@ -42,9 +42,8 @@ function generateStatusBoxTable(status) {
 }
 
 function generateViewFromData(data) {
-	const searchRequest = data.search_request;
+	const {search_request: searchRequest, application_request: applicationRequest} = data;
 	const status = searchRequest.status;
-	const applicationRequest = data.application_request;
 	const _links = searchRequest._links;
 	const total = data.aggregations.search_stats;
 
@@ -52,48 +51,15 @@ function generateViewFromData(data) {
 			return `${prev} &nbsp; <a href="${_links['transports'][next]}">${next}</a>`;
 		}, '');
 
-	const createHorizontalProperties = (properties, data) => {
-		let headers = properties.reduce((prev, next) => {
-			return `${prev}
-					<td>
-						<td class="font-weight-bold">${next.replace(/_/g, ' ').toLowerCase()}</td>
-					</td>`;
-		}, '');
-
-		let values = properties.reduce((prev, next) => {
-			return `${prev}
-					<td>
-						<td>${data[next]}</td>
-					</td>`;
-		}, '');
-
-		return `<tr>${headers}</tr><tr>${values}</tr>`;
-	}
-
 	const createProperties = (properties, data) => {
 		return properties.reduce((prev, next) => {
 			let content = data[next];
 
 			if (Array.isArray(content)) {
-				//content = content.join(', ');
 				content = content.reduce((prev, next) => {
 					return `${prev}
 							<code>${next}</code>`; 
 				}, '');
-			}
-
-			if (typeof content === 'object') {
-				return `
-					${prev}
-					<tr>
-						<td class="font-weight-bold">${next.replace(/_/g, ' ').toLowerCase()}</td>
-						<td>
-							<table>
-								${createHorizontalProperties(Object.keys(content), content)}
-							</table>
-						</td>
-					</tr>
-				`;
 			}
 
 			return `${prev}
@@ -112,15 +78,18 @@ function generateViewFromData(data) {
 		'country_context',
 		'currency',
 		'ages',
-		'journeys',
 		'resident',
 		'large_family',
 		'combined',
-		'platform',
-		// 'type_request',
-
+		'platform'
 	], searchRequest);
 
+	const journeys = searchRequest.journeys.reduce((prev, journey) => {
+		return `${prev}
+			<tr><td>${journey.departure}-${journey.arrival}</td><td>${journey.date}</td></tr>
+		`;
+	}, '');
+	
 	const applicationRequestData = createProperties(
 		Object.keys(applicationRequest)
 	, applicationRequest);
@@ -130,17 +99,26 @@ function generateViewFromData(data) {
 	let view = `<div class="row" style="color:#444;font-size:10px;">
 					<div class="col">
 						<nav class="nav nav-tabs" id="myTab" role="tablist">
-						  <a 	class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-expanded="true">
+						  <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-expanded="true">
 						  	Search
 						  </a>
-						  <a 	class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile">
+						  <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile">
 						  	Application Request
+						  </a>
+						  <a class="nav-item nav-link" id="nav-config-tab" data-toggle="tab" href="#nav-config" role="tab" aria-controls="nav-config">
+						  	Config
 						  </a>
 						</nav>
 						<div class="tab-content" id="nav-tabContent">
 						  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
 							<table class="table table-hover table-sm table-responsive">
 								${searchRequestData}
+								<tr>
+									<td class="font-weight-bold">journeys</td>
+									<td>
+										${renderHorizontalTable(['departure', 'arrival', 'date'], searchRequest.journeys)}
+									</td>
+								</tr>
 							</table>
 							<table class="table table-hover table-sm table-responsive">
 								<tr>
@@ -155,6 +133,24 @@ function generateViewFromData(data) {
 							<table class="table table-hover table-sm table-responsive">
 								${applicationRequestData}
 							 </table>
+						  </div>
+						  <div class="tab-pane fade" id="nav-config" role="tabpanel" aria-labelledby="nav-config-tab">
+							${renderHorizontalTable([
+								'provider',
+								'oneway', 
+								'roundtrip', 
+								'resident', 
+								'largeFamily',
+								'occupation'
+							], searchRequest.provider_configurations)}
+							${renderHorizontalTable([
+								'provider',
+								'journeys',
+								// 'carriers'
+							], searchRequest.provider_configurations)}
+							${renderHorizontalTable(
+								Object.keys(searchRequest.type_request), 
+							searchRequest.type_request)}
 						  </div>
 						</div>
 					</div>
@@ -174,3 +170,43 @@ function generateViewFromData(data) {
 //   };
 //   document.execCommand("Copy", false, null);
 // }
+
+const renderHorizontalTable = (properties, object) => {
+	const headers = properties.reduce((prevProperty, nextProperty) => {
+		return `${prevProperty}
+				<td>
+					<td class="font-weight-bold">${nextProperty.replace(/_/g, ' ').toLowerCase()}</td>
+				</td>`;
+	}, '');
+
+	if (!Array.isArray(object)) {
+		object = [object];
+	}
+
+ 	let rows = object.reduce((prevObject, nextObject) => {
+		let values = properties.reduce((prevProperty, nextProperty) => {
+
+			let content = nextObject[nextProperty];
+
+			if (Array.isArray(content)) {
+				content = content.reduce((prev, next) => {
+					return `${prev}
+							<code>${next}</code>`; 
+				}, '');
+			}
+
+			return `${prevProperty}
+					<td>
+						<td>${content}</td>
+					</td>`;
+		}, '');
+
+		return `${prevObject}
+				<tr>${values}</tr>`;
+	}, '');
+	
+	return `<table class="table table-hover table-sm table-responsive">
+				${headers}
+				${rows}
+			</table>`;
+}
