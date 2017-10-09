@@ -6,12 +6,17 @@ chrome.runtime.onMessage.addListener((message, sender, response) => {
 	}
 });
 
-setTimeout(populateTitles, 500);
+setTimeout(populateTitles, 2000);
 
 
 function populateTitles() {
 	storage.get({'results': []}, function(items) {
 		const data = items.results.data;
+
+		if (!data) {
+			return;
+		}
+
 		const combinations = data.combinations;
 
 		let _combinations = ((combinations) => {

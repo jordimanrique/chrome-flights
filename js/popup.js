@@ -48,7 +48,7 @@ function generateViewFromData(data) {
 	const total = data.aggregations.search_stats;
 
 	const transportsLinks = Object.keys(_links['transports']).reduce((prev, next) => {
-			return `${prev} &nbsp; <a href="${_links['transports'][next]}">${next}</a>`;
+			return `${prev} &nbsp; <a href="${_links['transports'][next].replace('http://', 'https://')}">${next}</a>`;
 		}, '');
 
 	const createProperties = (properties, data) => {
@@ -123,8 +123,8 @@ function generateViewFromData(data) {
 							<table class="table table-hover table-sm table-responsive">
 								<tr>
 									<td>${transportsLinks}</td>
-									<td><a href="${_links['packages']}">Packages</a></td>
-									<td><a href="${_links['combinations']}">Combinations</a></td>
+									<td><a href="${_links['packages'].replace('http://', 'https://')}">Packages</a></td>
+									<td><a href="${_links['combinations'].replace('http://', 'https://')}">Combinations</a></td>
 								</tr>
 							</table>
 							${statusBox}
