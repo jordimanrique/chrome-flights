@@ -1,80 +1,82 @@
 let storage = chrome.storage.local;
 
 chrome.runtime.onMessage.addListener((message, sender, response) => {
-	if (message.type === 'NEW_RESULTS') {
-		populateTitles();
-	}
+    if (message.type === 'NEW_RESULTS') {
+        populateTitles();
+    }
 });
 
-setTimeout(populateTitles, 2000);
+setTimeout(populateTitles, 5000);
 
 
 function populateTitles() {
-	storage.get({'results': []}, function(items) {
-		const data = items.results.data;
+    storage.get({'results': []}, function(items) {
+        const data = items.results.data;
 
-		if (!data) {
-			return;
-		}
+        if (data === undefined) {
+            return;
+        }
 
-		const combinations = data.combinations;
+        console.log('titles');
 
-		let _combinations = ((combinations) => {
-			return combinations.reduce((prev, combi) => {
-				const identity = combi.identity;
-				const type = combi.type === 'TRANSPORT' ? 'transports' : 'packages';
-				prev[identity] = {
-					type: combi.type,
-					combinationId: identity
-				};
+        const combinations = data.combinations;
 
-				if (type === 'packages') {
-					combi[type].forEach((package) => {
-						let transports = package.transports;
-						Object.keys(transports).forEach((key) => {
-							transports[key].forEach((transport) => {
-								prev[transport.id] = {
-									provider: transport.provider,
-									id: transport.id,
-									type: combi.type,
-									plating_carrier: transport.plating_carrier
-								};
-							});
-						});
-					});
+        let _combinations = ((combinations) => {
+            return combinations.reduce((prev, combi) => {
+                const identity = combi.identity;
+                const type = combi.type === 'TRANSPORT' ? 'transports' : 'packages';
+                prev[identity] = {
+                    type: combi.type,
+                    combinationId: identity
+                };
 
-					return prev;
-				}
+                if (type === 'packages') {
+                    combi[type].forEach((package) => {
+                        let transports = package.transports;
+                        Object.keys(transports).forEach((key) => {
+                            transports[key].forEach((transport) => {
+                                prev[transport.id] = {
+                                    provider: transport.provider,
+                                    id: transport.id,
+                                    type: combi.type,
+                                    plating_carrier: transport.plating_carrier
+                                };
+                            });
+                        });
+                    });
 
-				Object.keys(combi[type]).forEach((key) => {
-					combi[type][key].forEach((transport) => {
-						prev[transport.id] = {
-							provider: transport.provider,
-							id: transport.id,
-							type: combi.type,
-							plating_carrier: transport.plating_carrier
-						};
-					});
-				});
+                    return prev;
+                }
 
-				return prev;
-			}, {});
-		})(combinations);
+                Object.keys(combi[type]).forEach((key) => {
+                    combi[type][key].forEach((transport) => {
+                        prev[transport.id] = {
+                            provider: transport.provider,
+                            id: transport.id,
+                            type: combi.type,
+                            plating_carrier: transport.plating_carrier
+                        };
+                    });
+                });
 
-		$('div.info-track').each(function() {
-			const id = $(this).attr('id');
-			const data = _combinations[id];
-			if (data) {
-				const title = `[${data.type}] [${data.provider}] [${data.plating_carrier}] ${data.id} `;
-				$(this).attr('title', title);
-			}
-		});
+                return prev;
+            }, {});
+        })(combinations);
 
-		$('article[data-combination-id]').each(function() {
-			const combinationId = $(this).data('combination-id');
-			const data = _combinations[combinationId];
-			const title = `[${data.type}] CombinationId [${data.combinationId}]`;
-			$(this).attr('title', title);
-		});
-	});
+        $('div.info-track').each(function() {
+            const id = $(this).attr('id');
+            const data = _combinations[id];
+            if (data) {
+                const title = `[${data.type}] [${data.provider}] [${data.plating_carrier}] ${data.id} `;
+                $(this).attr('title', title);
+            }
+        });
+
+        $('article[data-combination-id]').each(function() {
+            const combinationId = $(this).data('combination-id');
+            const data = _combinations[combinationId];
+            const title = `[${data.type}] CombinationId [${data.combinationId}]`;
+            $(this).attr('title', title);
+        });
+    });
 }
