@@ -77,6 +77,14 @@ function populateTitles() {
             const data = _combinations[combinationId];
             const title = `[${data.type}] CombinationId [${data.combinationId}]`;
             $(this).attr('title', title);
+
+            let color = 'rgba(46, 188, 30, 0.4)';
+
+            if (data.type === 'TRANSPORT' ) {
+                color = 'rgba(100, 149, 237, 0.4)';
+            }
+
+            $(this).css('border-top', `10px solid ${color}`);
         });
     });
 }
