@@ -24,5 +24,15 @@
     "webRequest",
     "*://*/apitransport/*",
     "storage"
-  ]
+  ],
+  "commands": {
+    "toggle-transports": {
+      "suggested_key": { "default": "Alt+Shift+G" },
+      "description": "Show or hide transports and packages"
+    },
+    "_execute_page_action": {
+      "suggested_key": { "default": "Alt+Shift+F" },
+      "description": "Show TransportSearchRequest info"
+    }
+  }
 }

@@ -15,17 +15,6 @@ chrome.runtime.onInstalled.addListener(() =>  {
     });
 });
 
-function processFormData(formData) {
-    var data = new FormData();
-
-    var keys = Object.keys(formData);
-    for (var i = 0; i < keys.length; i++) {
-        data.append(keys[i], formData[keys[i]][0]);
-    }
-
-    return data;
-}
-
 chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
         if (details.type === "xmlhttprequest") {
@@ -43,6 +32,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 }).then((data) => {
                     storage.set({'results': data}, function() {
                         sendMessage({type:'NEW_RESULTS'});
+                        // alert('new results');
                     });
                 });
             }
@@ -55,6 +45,23 @@ chrome.webRequest.onBeforeRequest.addListener(
     ["requestBody"]
 );
 
+chrome.commands.onCommand.addListener((command) => {
+    sendMessage({
+        type: 'COMMAND',
+        payload: command
+    })
+});
+
+function processFormData(formData) {
+    var data = new FormData();
+
+    var keys = Object.keys(formData);
+    for (var i = 0; i < keys.length; i++) {
+        data.append(keys[i], formData[keys[i]][0]);
+    }
+
+    return data;
+}
 
 function sendMessage(message) {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {

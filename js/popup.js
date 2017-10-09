@@ -5,19 +5,11 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
         const data = changes.results.newValue.data;
         window.data = data;
 
-        console.log(data);
-
         if (data) {
             renderView(data);
         }
     }
 });
-
-function renderView(data) {
-    const {view, total} = generateViewFromData(data);
-    $('#container').html(view);
-    $('#total').html(total);
-}
 
 storage.get({'results': []}, function(items) {
     const data = items.results.data;
@@ -25,7 +17,17 @@ storage.get({'results': []}, function(items) {
     renderView(data);
 });
 
-function generateStatusBoxTable(status) {
+/*
+	VIEWS
+*/
+
+const renderView = (data) => {
+    const {view, total} = generateViewFromData(data);
+    $('#container').html(view);
+    $('#total').html(total);
+}
+
+const generateStatusBoxTable = (status) => {
     const providers = Object.keys(status.provider_status);
 
     const statusBox = providers.reduce((prev, next) => {
@@ -41,7 +43,7 @@ function generateStatusBoxTable(status) {
     return `<table class="table table-sm"><tr>${statusBox}</tr></table>`;
 }
 
-function generateViewFromData(data) {
+const generateViewFromData = (data) => {
     const {search_request: searchRequest, application_request: applicationRequest} = data;
     const status = searchRequest.status;
     const _links = searchRequest._links;
@@ -145,8 +147,7 @@ function generateViewFromData(data) {
                             ], searchRequest.provider_configurations)}
                             ${renderHorizontalTable([
                                 'provider',
-                                'journeys',
-                                // 'carriers'
+                                'journeys'
                             ], searchRequest.provider_configurations)}
                             ${renderHorizontalTable(
                                 Object.keys(searchRequest.type_request), 
@@ -161,7 +162,6 @@ function generateViewFromData(data) {
         total: total
     };
 }
-
 
 // copy: function(str, mimetype) {
 //   document.oncopy = function(event) {
