@@ -21,7 +21,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             var formData = details.requestBody.formData;
             var url = details.url + '?_ce=true';
 
-            storage.set({'results': {}});
+            // storage.set({'results': {}});
 
             if (formData) {
                 fetch(url, {
@@ -32,7 +32,6 @@ chrome.webRequest.onBeforeRequest.addListener(
                 }).then((data) => {
                     storage.set({'results': data}, function() {
                         sendMessage({type:'NEW_RESULTS'});
-                        // alert('new results');
                     });
                 });
             }

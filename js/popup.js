@@ -99,7 +99,7 @@ const generateViewFromData = (data) => {
     const statusBox = generateStatusBoxTable(status);
 
     let view = `<div class="row" style="color:#444;font-size:10px;">
-                    <div class="col">
+                    <div>
                         <nav class="nav nav-tabs" id="myTab" role="tablist">
                           <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-expanded="true">
                             Search
@@ -113,7 +113,7 @@ const generateViewFromData = (data) => {
                         </nav>
                         <div class="tab-content" id="nav-tabContent">
                           <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                            <table class="table table-hover table-sm table-responsive">
+                            <table class="table table-hover table-sm">
                                 ${searchRequestData}
                                 <tr>
                                     <td class="font-weight-bold">journeys</td>
@@ -122,7 +122,7 @@ const generateViewFromData = (data) => {
                                     </td>
                                 </tr>
                             </table>
-                            <table class="table table-hover table-sm table-responsive">
+                            <table class="table table-hover table-sm">
                                 <tr>
                                     <td>${transportsLinks}</td>
                                     <td><a target="_blank" href="${_links['packages'].replace('http://', 'https://')}">Packages</a></td>
@@ -132,7 +132,7 @@ const generateViewFromData = (data) => {
                             ${statusBox}
                           </div>
                           <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                            <table class="table table-hover table-sm table-responsive">
+                            <table class="table table-hover table-sm">
                                 ${applicationRequestData}
                              </table>
                           </div>
@@ -205,7 +205,7 @@ const renderHorizontalTable = (properties, object) => {
                 <tr>${values}</tr>`;
     }, '');
 
-    return `<table class="table table-hover table-sm table-responsive">
+    return `<table class="table table-hover table-sm">
                 ${headers}
                 ${rows}
             </table>`;
