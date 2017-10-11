@@ -18,37 +18,23 @@ storage.get({'results': []}, function(items) {
 });
 
 /*
-	VIEWS
+    VIEWS
 */
 
-const renderView = (data) => {
+function renderView(data) {
     $(document).ready(function(){
         const {view, total} = generateViewFromData(data);
         $('#container').html(view);
         $('#total').html(total);
+
+        //Prevent chrome bug on resize popup
         setTimeout(function (){
             $('#container').css("border", "solid 1px transparent");
         }, 100);
     });
 };
 
-const generateStatusBoxTable = (status) => {
-    const providers = Object.keys(status.provider_status);
-
-    const statusBox = providers.reduce((prev, next) => {
-        const statusCode = status.provider_status[next].status;
-        const label = statusCode === 'COMPLETED' ? 'success': 'warning';
-
-        return `
-            ${prev}
-            <td><span class="badge badge-${label}" style="padding:5px; font-size:10px;">${next}</span></td>
-        `;
-    }, '');
-
-    return `<table class="table table-sm"><tr>${statusBox}</tr></table>`;
-}
-
-const generateViewFromData = (data) => {
+function generateViewFromData(data) {
     const {search_request: searchRequest, application_request: applicationRequest} = data;
     const status = searchRequest.status;
     const _links = searchRequest._links;
@@ -57,25 +43,6 @@ const generateViewFromData = (data) => {
     const transportsLinks = Object.keys(_links['transports']).reduce((prev, next) => {
             return `${prev} &nbsp; <a target="_blank" href="${_links['transports'][next].replace('http://', 'https://')}">${next}</a>`;
         }, '');
-
-    const createProperties = (properties, data) => {
-        return properties.reduce((prev, next) => {
-            let content = data[next];
-
-            if (Array.isArray(content)) {
-                content = content.reduce((prev, next) => {
-                    return `${prev}
-                            <code>${next}</code>`;
-                }, '');
-            }
-
-            return `${prev}
-                    <tr>
-                        <td class="font-weight-bold">${next.replace(/_/g, ' ').toLowerCase()}</td>
-                        <td>${content}</td>
-                    </tr>`;
-        }, '');
-    }
 
     const searchRequestData = createProperties([
         'identity',
@@ -168,15 +135,52 @@ const generateViewFromData = (data) => {
     };
 }
 
-// copy: function(str, mimetype) {
-//   document.oncopy = function(event) {
-//     event.clipboardData.setData(mimetype, str);
-//     event.preventDefault();
-//   };
-//   document.execCommand("Copy", false, null);
-// }
+function generateStatusBoxTable(status) {
 
-const renderHorizontalTable = (properties, object) => {
+    function getLabelFromStatusCode(statusCode) {
+        switch(statusCode) {
+            case 'COMPLETED':
+                return 'success';
+            case 'PENDING':
+                return 'warning';
+            case 'ERROR':
+                return 'danger';
+        }
+    }
+
+    const statusBox = Object.keys(status.provider_status).reduce((prev, next) => {
+        const statusCode = status.provider_status[next].status;
+        const label = getLabelFromStatusCode(statusCode);
+
+        return `
+            ${prev}
+            <td><span class="badge badge-${label}" style="padding:5px; font-size:10px;">${next}</span></td>
+        `;
+    }, '');
+
+    return `<table class="table table-sm"><tr>${statusBox}</tr></table>`;
+}
+
+function createProperties(properties, data) {
+    return properties.reduce((prev, next) => {
+        let content = data[next];
+
+        if (Array.isArray(content)) {
+            content = content.reduce((prev, next) => {
+                return `${prev}
+                            <code>${next}</code>`;
+            }, '');
+        }
+
+        return `${prev}
+                    <tr>
+                        <td class="font-weight-bold">${next.replace(/_/g, ' ').toLowerCase()}</td>
+                        <td>${content}</td>
+                    </tr>`;
+    }, '');
+}
+
+function renderHorizontalTable(properties, object) {
     const headers = properties.reduce((prevProperty, nextProperty) => {
         return `${prevProperty}
                 <td>
