@@ -1,9 +1,11 @@
+const TRANSPORT_TYPE = 'TRANSPORT';
+const PACKAGE_TYPE = 'PACKAGE';
+
 let storage = chrome.storage.local;
 
-chrome.runtime.onMessage.addListener((message, sender, response) => {
+chrome.runtime.onMessage.addListener((message) => {
     switch(message.type) {
         case 'NEW_RESULTS':
-            // alert('process new results');
             processResultsBoxes();
             break;
         case 'COMMAND':
@@ -24,14 +26,12 @@ chrome.runtime.onMessage.addListener((message, sender, response) => {
     }
 });
 
-// alert('contentScript');
-
 function processResultsBoxes() {
     storage.get({'results': []}, function(items) {
         const data = items.results.data;
 
         if (data === undefined) {
-            alert('Atrapalo Flights: No Results');
+            alert('Atrapalo Flights: No Results found');
             return;
         }
 
@@ -40,7 +40,7 @@ function processResultsBoxes() {
         let _combinations = ((combinations) => {
             return combinations.reduce((prev, combi) => {
                 const identity = combi.identity;
-                const type = combi.type === 'TRANSPORT' ? 'transports' : 'packages';
+                const type = combi.type === TRANSPORT_TYPE ? 'transports' : 'packages';
                 prev[identity] = {
                     type: combi.type
                 };
@@ -118,7 +118,7 @@ function processResultsBoxes() {
 }
 
 function getColor(transportType) {
-    if (transportType === 'TRANSPORT' ) {
+    if (transportType === TRANSPORT_TYPE ) {
         return 'rgba(100, 149, 237, 0.2)';
     }
 
