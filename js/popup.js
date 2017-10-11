@@ -22,10 +22,15 @@ storage.get({'results': []}, function(items) {
 */
 
 const renderView = (data) => {
-    const {view, total} = generateViewFromData(data);
-    $('#container').html(view);
-    $('#total').html(total);
-}
+    $(document).ready(function(){
+        const {view, total} = generateViewFromData(data);
+        $('#container').html(view);
+        $('#total').html(total);
+        setTimeout(function (){
+            $('#container').css("border", "solid 1px transparent");
+        }, 100);
+    });
+};
 
 const generateStatusBoxTable = (status) => {
     const providers = Object.keys(status.provider_status);
