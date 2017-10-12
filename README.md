@@ -18,7 +18,8 @@ Create dist files
     
 ## How to install
 
+- [Remove previous version if exists]
 - Go to [chrome://extensions](chrome://extensions)
-- Activate developmer mode
+- Activate developer mode
 - Click on load uncompressed extension
 - Select the dist folder
