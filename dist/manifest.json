@@ -3,13 +3,13 @@
 
   "name": "Atrapalo Flights",
   "description": "Atrapalo Flights",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "icons": {
-    "128" : "aeroplane_128.png"
+    "128" : "icons/aeroplane_128.png"
   },
   "page_action": {
-    "default_icon": "aeroplane_128.png",
-    "default_popup": "popup.html"
+    "default_icon": "icons/aeroplane_128.png",
+    "default_popup": "html/popup.html"
   },
   "background": {
     "persistent": true,
@@ -30,7 +30,7 @@
   ],
   "commands": {
     "toggle-info": {
-      "suggested_key": { "default": "Alt+Shift+I" },
+      "suggested_key": { "default": "Alt+Shift+R" },
       "description": "Show or hide transports and packages"
     },
     "toggle-transports": {

@@ -27,9 +27,9 @@ chrome.runtime.onMessage.addListener((message) => {
 
 function processResultsBoxes() {
     storage.get({'results': []}, function(items) {
-        const fligthResults = items.results && items.results.fligthResults;
+        const flightResults = items.results && items.results.flightResults;
 
-        if (!fligthResults) {
+        if (!flightResults) {
             alert('Atrapalo Flights: No Results found');
             return;
         }
@@ -40,7 +40,7 @@ function processResultsBoxes() {
         //Set info in Transports
         $('div.info-track').each(function() {
             const id = $(this).attr('id');
-            const data = fligthResults[id];
+            const data = flightResults[id];
             if (data) {
                 const title = `[${data.provider}] [${data.plating_carrier}] ${data.id} `;
                 $(this).attr('title', title);
@@ -58,7 +58,7 @@ function processResultsBoxes() {
         //Set info in Combinations Boxes
         $('article[data-combination-id]').each(function() {
             const combinationId = $(this).data('combination-id');
-            const data = fligthResults[combinationId];
+            const data = flightResults[combinationId];
 
             if (data) {
                 const title = `[${data.type}] [CombinationId] ${combinationId}`;

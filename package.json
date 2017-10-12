@@ -1,0 +1,33 @@
+{
+  "name": "chrome-flights",
+  "version": "0.1.0",
+  "description": "Atrapalo Flights chrome extension",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "watch": "webpack --progress --colors --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rmboloix/chrome-flights.git"
+  },
+  "keywords": [
+    "Chrome",
+    "Extension"
+  ],
+  "author": "dt_vuelos@atrapalo.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rmboloix/chrome-flights/issues"
+  },
+  "homepage": "https://github.com/rmboloix/chrome-flights#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "webpack": "^3.7.1"
+  }
+}
