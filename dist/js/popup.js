@@ -1,221 +1,211 @@
-const storage = chrome.storage.local;
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */,
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
 
-chrome.storage.onChanged.addListener(function(changes, namespace) {
-    if (changes.results) {
-        const data = changes.results.newValue.data;
-        window.data = data;
+"use strict";
 
-        if (data) {
-            renderView(data);
-        }
-    }
-});
 
-storage.get({'results': []}, function(items) {
-    const data = items.results.data;
+var storage = chrome.storage.local;
+
+chrome.storage.onChanged.addListener(function (changes) {
+  if (changes.results) {
+    var data = changes.results.newValue.data;
     window.data = data;
     renderView(data);
+  }
+});
+
+storage.get({ 'results': [] }, function (items) {
+  var data = items.results.data;
+  window.data = data;
+  renderView(data);
 });
 
 /*
-    VIEWS
-*/
+ VIEWS
+ */
 
 function renderView(data) {
-    $(document).ready(function(){
-        const {view, total} = generateViewFromData(data);
-        $('#container').html(view);
-        $('#total').html(total);
+  if (!data) {
+    return;
+  }
 
-        //Prevent chrome bug on resize popup
-        setTimeout(function (){
-            $('#container').css("border", "solid 1px transparent");
-        }, 100);
-    });
+  $(document).ready(function () {
+    var _generateViewFromData = generateViewFromData(data),
+        view = _generateViewFromData.view,
+        total = _generateViewFromData.total;
+
+    $('#container').html(view);
+    $('#total').html(total);
+
+    //Prevent chrome bug on resize popup
+    setTimeout(function () {
+      $('#container').css("border", "solid 1px transparent");
+    }, 100);
+  });
 };
 
 function generateViewFromData(data) {
-    const {search_request: searchRequest, application_request: applicationRequest} = data;
-    const status = searchRequest.status;
-    const _links = searchRequest._links;
-    const total = data.aggregations.search_stats;
+  var searchRequest = data.search_request,
+      applicationRequest = data.application_request;
 
-    const transportsLinks = Object.keys(_links['transports']).reduce((prev, next) => {
-            return `${prev} &nbsp; <a target="_blank" href="${_links['transports'][next].replace('http://', 'https://')}">${next}</a>`;
-        }, '');
+  var status = searchRequest.status;
+  var _links = searchRequest._links;
+  var total = data.aggregations.search_stats;
 
-    const searchRequestData = createProperties([
-        'identity',
-        'created',
-        'agent',
-        'channel',
-        'country_context',
-        'currency',
-        'ages',
-        'resident',
-        'large_family',
-        'combined',
-        'platform'
-    ], searchRequest);
+  var transportsLinks = Object.keys(_links['transports']).reduce(function (prev, next) {
+    return prev + ' &nbsp; <a target="_blank" href="' + _links['transports'][next].replace('http://', 'https://') + '">' + next + '</a>';
+  }, '');
 
-    const journeys = searchRequest.journeys.reduce((prev, journey) => {
-        return `${prev}
-            <tr><td>${journey.departure}-${journey.arrival}</td><td>${journey.date}</td></tr>
-        `;
-    }, '');
+  var searchRequestData = createProperties(['identity', 'created', 'agent', 'channel', 'country_context', 'currency', 'ages', 'resident', 'large_family', 'combined', 'platform'], searchRequest);
 
-    const applicationRequestData = createProperties(
-        Object.keys(applicationRequest)
-    , applicationRequest);
+  var journeys = searchRequest.journeys.reduce(function (prev, journey) {
+    return prev + '\n            <tr><td>' + journey.departure + '-' + journey.arrival + '</td><td>' + journey.date + '</td></tr>\n        ';
+  }, '');
 
-    const statusBox = generateStatusBoxTable(status);
+  var applicationRequestData = createProperties(Object.keys(applicationRequest), applicationRequest);
 
-    let view = `<div class="row" style="color:#444;font-size:10px;">
-                    <div>
-                        <nav class="nav nav-tabs" id="myTab" role="tablist">
-                          <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-expanded="true">
-                            Search
-                          </a>
-                          <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile">
-                            Application Request
-                          </a>
-                          <a class="nav-item nav-link" id="nav-config-tab" data-toggle="tab" href="#nav-config" role="tab" aria-controls="nav-config">
-                            Config
-                          </a>
-                        </nav>
-                        <div class="tab-content" id="nav-tabContent">
-                          <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                            <table class="table table-hover table-sm">
-                                ${searchRequestData}
-                                <tr>
-                                    <td class="font-weight-bold">journeys</td>
-                                    <td>
-                                        ${renderHorizontalTable(['departure', 'arrival', 'date'], searchRequest.journeys)}
-                                    </td>
-                                </tr>
-                            </table>
-                            <table class="table table-hover table-sm">
-                                <tr>
-                                    <td>${transportsLinks}</td>
-                                    <td><a target="_blank" href="${_links['packages'].replace('http://', 'https://')}">Packages</a></td>
-                                    <td><a target="_blank" href="${_links['combinations'].replace('http://', 'https://')}">Combinations</a></td>
-                                </tr>
-                            </table>
-                            ${statusBox}
-                          </div>
-                          <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                            <table class="table table-hover table-sm">
-                                ${applicationRequestData}
-                             </table>
-                          </div>
-                          <div class="tab-pane fade" id="nav-config" role="tabpanel" aria-labelledby="nav-config-tab">
-                            ${renderHorizontalTable([
-                                'provider',
-                                'oneway', 
-                                'roundtrip', 
-                                'resident', 
-                                'largeFamily',
-                                'occupation'
-                            ], searchRequest.provider_configurations)}
-                            ${renderHorizontalTable([
-                                'provider',
-                                'journeys'
-                            ], searchRequest.provider_configurations)}
-                            ${renderHorizontalTable(
-                                Object.keys(searchRequest.type_request), 
-                            searchRequest.type_request)}
-                          </div>
-                        </div>
-                    </div>
-                </div>`;
+  var statusBox = generateStatusBoxTable(status);
 
-    return {
-        view: view,
-        total: total
-    };
+  var view = '<div class="row" style="color:#444;font-size:10px;">\n                    <div>\n                        <nav class="nav nav-tabs" id="myTab" role="tablist">\n                          <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-expanded="true">\n                            Search\n                          </a>\n                          <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile">\n                            Application Request\n                          </a>\n                          <a class="nav-item nav-link" id="nav-config-tab" data-toggle="tab" href="#nav-config" role="tab" aria-controls="nav-config">\n                            Config\n                          </a>\n                        </nav>\n                        <div class="tab-content" id="nav-tabContent">\n                          <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">\n                            <table class="table table-hover table-sm">\n                                ' + searchRequestData + '\n                                <tr>\n                                    <td class="font-weight-bold">journeys</td>\n                                    <td>\n                                        ' + renderHorizontalTable(['departure', 'arrival', 'date'], searchRequest.journeys) + '\n                                    </td>\n                                </tr>\n                            </table>\n                            <table class="table table-hover table-sm">\n                                <tr>\n                                    <td>' + transportsLinks + '</td>\n                                    <td><a target="_blank" href="' + _links['packages'].replace('http://', 'https://') + '">Packages</a></td>\n                                    <td><a target="_blank" href="' + _links['combinations'].replace('http://', 'https://') + '">Combinations</a></td>\n                                </tr>\n                            </table>\n                            ' + statusBox + '\n                          </div>\n                          <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">\n                            <table class="table table-hover table-sm">\n                                ' + applicationRequestData + '\n                             </table>\n                          </div>\n                          <div class="tab-pane fade" id="nav-config" role="tabpanel" aria-labelledby="nav-config-tab">\n                            ' + renderHorizontalTable(['provider', 'oneway', 'roundtrip', 'resident', 'largeFamily', 'occupation'], searchRequest.provider_configurations) + '\n                            ' + renderHorizontalTable(['provider', 'journeys'], searchRequest.provider_configurations) + '\n                            ' + renderHorizontalTable(Object.keys(searchRequest.type_request), searchRequest.type_request) + '\n                          </div>\n                        </div>\n                    </div>\n                </div>';
+
+  return {
+    view: view,
+    total: total
+  };
 }
 
 function generateStatusBoxTable(status) {
 
-    function getLabelFromStatusCode(statusCode) {
-        switch(statusCode) {
-            case 'COMPLETED':
-                return 'success';
-            case 'PENDING':
-                return 'warning';
-            case 'ERROR':
-                return 'danger';
-        }
+  function getLabelFromStatusCode(statusCode) {
+    switch (statusCode) {
+      case 'COMPLETED':
+        return 'success';
+      case 'PENDING':
+        return 'warning';
+      case 'ERROR':
+        return 'danger';
     }
+  }
 
-    const statusBox = Object.keys(status.provider_status).reduce((prev, next) => {
-        const statusCode = status.provider_status[next].status;
-        const label = getLabelFromStatusCode(statusCode);
+  var statusBox = Object.keys(status.provider_status).reduce(function (prev, next) {
+    var statusCode = status.provider_status[next].status;
+    var label = getLabelFromStatusCode(statusCode);
 
-        return `
-            ${prev}
-            <td><span class="badge badge-${label}" style="padding:5px; font-size:10px;">${next}</span></td>
-        `;
-    }, '');
+    return '\n            ' + prev + '\n            <td><span class="badge badge-' + label + '" style="padding:5px; font-size:10px;">' + next + '</span></td>\n        ';
+  }, '');
 
-    return `<table class="table table-sm"><tr>${statusBox}</tr></table>`;
+  return '<table class="table table-sm"><tr>' + statusBox + '</tr></table>';
 }
 
 function createProperties(properties, data) {
-    return properties.reduce((prev, next) => {
-        let content = data[next];
+  return properties.reduce(function (prev, next) {
+    var content = data[next];
 
-        if (Array.isArray(content)) {
-            content = content.reduce((prev, next) => {
-                return `${prev}
-                            <code>${next}</code>`;
-            }, '');
-        }
+    if (Array.isArray(content)) {
+      content = content.reduce(function (prev, next) {
+        return prev + '\n                            <code>' + next + '</code>';
+      }, '');
+    }
 
-        return `${prev}
-                    <tr>
-                        <td class="font-weight-bold">${next.replace(/_/g, ' ').toLowerCase()}</td>
-                        <td>${content}</td>
-                    </tr>`;
-    }, '');
+    return prev + '\n                    <tr>\n                        <td class="font-weight-bold">' + next.replace(/_/g, ' ').toLowerCase() + '</td>\n                        <td>' + content + '</td>\n                    </tr>';
+  }, '');
 }
 
 function renderHorizontalTable(properties, object) {
-    const headers = properties.reduce((prevProperty, nextProperty) => {
-        return `${prevProperty}
-                <td>
-                    <td class="font-weight-bold">${nextProperty.replace(/_/g, ' ').toLowerCase()}</td>
-                </td>`;
-    }, '');
+  var headers = properties.reduce(function (prevProperty, nextProperty) {
+    return prevProperty + '\n                <td>\n                    <td class="font-weight-bold">' + nextProperty.replace(/_/g, ' ').toLowerCase() + '</td>\n                </td>';
+  }, '');
 
-    if (!Array.isArray(object)) {
-        object = [object];
-    }
+  if (!Array.isArray(object)) {
+    object = [object];
+  }
 
-    let rows = object.reduce((prevObject, nextObject) => {
-        let values = properties.reduce((prevProperty, nextProperty) => {
+  var rows = object.reduce(function (prevObject, nextObject) {
+    var values = properties.reduce(function (prevProperty, nextProperty) {
 
-            let content = nextObject[nextProperty];
+      var content = nextObject[nextProperty];
 
-            if (Array.isArray(content)) {
-                content = content.reduce((prev, next) => {
-                    return `${prev}
-                            <code>${next}</code>`;
-                }, '');
-            }
-
-            return `${prevProperty}
-                    <td>
-                        <td>${content}</td>
-                    </td>`;
+      if (Array.isArray(content)) {
+        content = content.reduce(function (prev, next) {
+          return prev + '\n                            <code>' + next + '</code>';
         }, '');
+      }
 
-        return `${prevObject}
-                <tr>${values}</tr>`;
+      return prevProperty + '\n                    <td>\n                        <td>' + content + '</td>\n                    </td>';
     }, '');
 
-    return `<table class="table table-hover table-sm">
-                ${headers}
-                ${rows}
-            </table>`;
+    return prevObject + '\n                <tr>' + values + '</tr>';
+  }, '');
+
+  return '<table class="table table-hover table-sm">\n                ' + headers + '\n                ' + rows + '\n            </table>';
 }
+
+/***/ })
+/******/ ]);

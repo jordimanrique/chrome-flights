@@ -30,15 +30,24 @@
   ],
   "commands": {
     "toggle-info": {
-      "suggested_key": { "default": "Alt+Shift+R" },
+      "suggested_key": {
+        "default": "Alt+Shift+I",
+        "linux": "Alt+Shift+1"
+      },
       "description": "Show or hide transports and packages"
     },
     "toggle-transports": {
-      "suggested_key": { "default": "Alt+Shift+T" },
+      "suggested_key": {
+        "default": "Alt+Shift+T",
+        "linux": "Alt+Shift+2"
+      },
       "description": "Show or hide transports"
     },
     "toggle-packages": {
-      "suggested_key": { "default": "Alt+Shift+P" },
+      "suggested_key": {
+        "default": "Alt+Shift+P",
+        "linux": "Alt+Shift+3"
+      },
       "description": "Show or hide packages"
     },
     "_execute_page_action": {
