@@ -190,9 +190,7 @@ function createProperties(properties, data) {
 function renderHorizontalTable(properties, object) {
   const headers = properties.reduce((prevProperty, nextProperty) => {
     return `${prevProperty}
-                <td>
-                    <td class="font-weight-bold">${nextProperty.replace(/_/g, ' ').toLowerCase()}</td>
-                </td>`;
+                <td class="font-weight-bold">${nextProperty.replace(/_/g, ' ').toLowerCase()}</td>`;
   }, '');
 
   if (!Array.isArray(object)) {
@@ -206,15 +204,12 @@ function renderHorizontalTable(properties, object) {
 
       if (Array.isArray(content)) {
         content = content.reduce((prev, next) => {
-          return `${prev}
-                            <code>${next}</code>`;
+          return `${prev} <code>${next}</code>`;
         }, '');
       }
 
       return `${prevProperty}
-                    <td>
-                        <td>${content}</td>
-                    </td>`;
+              <td>${content}</td>`;
     }, '');
 
     return `${prevObject}

@@ -186,7 +186,7 @@ function createProperties(properties, data) {
 
 function renderHorizontalTable(properties, object) {
   var headers = properties.reduce(function (prevProperty, nextProperty) {
-    return prevProperty + '\n                <td>\n                    <td class="font-weight-bold">' + nextProperty.replace(/_/g, ' ').toLowerCase() + '</td>\n                </td>';
+    return prevProperty + '\n                <td class="font-weight-bold">' + nextProperty.replace(/_/g, ' ').toLowerCase() + '</td>';
   }, '');
 
   if (!Array.isArray(object)) {
@@ -200,11 +200,11 @@ function renderHorizontalTable(properties, object) {
 
       if (Array.isArray(content)) {
         content = content.reduce(function (prev, next) {
-          return prev + '\n                            <code>' + next + '</code>';
+          return prev + ' <code>' + next + '</code>';
         }, '');
       }
 
-      return prevProperty + '\n                    <td>\n                        <td>' + content + '</td>\n                    </td>';
+      return prevProperty + '\n              <td>' + content + '</td>';
     }, '');
 
     return prevObject + '\n                <tr>' + values + '</tr>';

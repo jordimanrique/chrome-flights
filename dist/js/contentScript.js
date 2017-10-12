@@ -12,12 +12,10 @@ chrome.runtime.onMessage.addListener((message) => {
         case 'toggle-info':
           $('div.chrome-flights__box').toggleClass('hidden');
           break;
-
         case 'only-packages':
           $('.chrome-flights__PACKAGE').removeClass('hidden');
           $('.chrome-flights__TRANSPORT').addClass('hidden');
           break;
-
         case 'only-transports':
           $('.chrome-flights__TRANSPORT').removeClass('hidden');
           $('.chrome-flights__PACKAGE').addClass('hidden');
@@ -27,7 +25,6 @@ chrome.runtime.onMessage.addListener((message) => {
           $('.chrome-flights__PACKAGE').removeClass('hidden');
           break;
       }
-      break;
   }
 });
 
