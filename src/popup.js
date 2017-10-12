@@ -71,64 +71,70 @@ function generateViewFromData(data) {
 
   const statusBox = generateStatusBoxTable(status);
 
-  let view = `<div class="row" style="color:#444;font-size:10px;">
-                    <div>
-                        <nav class="nav nav-tabs" id="myTab" role="tablist">
-                          <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-expanded="true">
-                            Search
-                          </a>
-                          <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile">
-                            Application Request
-                          </a>
-                          <a class="nav-item nav-link" id="nav-config-tab" data-toggle="tab" href="#nav-config" role="tab" aria-controls="nav-config">
-                            Config
-                          </a>
-                        </nav>
-                        <div class="tab-content" id="nav-tabContent">
-                          <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                            <table class="table table-hover table-sm">
-                                ${searchRequestData}
-                                <tr>
-                                    <td class="font-weight-bold">journeys</td>
-                                    <td>
-                                        ${renderHorizontalTable(['departure', 'arrival', 'date'], searchRequest.journeys)}
-                                    </td>
-                                </tr>
-                            </table>
-                            <table class="table table-hover table-sm">
-                                <tr>
-                                    <td>${transportsLinks}</td>
-                                    <td><a target="_blank" href="${_links['packages'].replace('http://', 'https://')}">Packages</a></td>
-                                    <td><a target="_blank" href="${_links['combinations'].replace('http://', 'https://')}">Combinations</a></td>
-                                </tr>
-                            </table>
-                            ${statusBox}
-                          </div>
-                          <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                            <table class="table table-hover table-sm">
-                                ${applicationRequestData}
-                             </table>
-                          </div>
-                          <div class="tab-pane fade" id="nav-config" role="tabpanel" aria-labelledby="nav-config-tab">
-                            ${renderHorizontalTable([
+  const providerConfig = renderHorizontalTable([
     'provider',
     'oneway',
     'roundtrip',
     'resident',
     'largeFamily',
     'occupation'
-  ], searchRequest.provider_configurations)}
-                            ${renderHorizontalTable([
+  ], searchRequest.provider_configurations);
+
+  const providerJourneyConfig = renderHorizontalTable([
     'provider',
     'journeys'
-  ], searchRequest.provider_configurations)}
-                            ${renderHorizontalTable(
+  ], searchRequest.provider_configurations);
+
+  const requestInfo = renderHorizontalTable(
     Object.keys(searchRequest.type_request),
-    searchRequest.type_request)}
-                          </div>
+    searchRequest.type_request);
+
+  let view = `<div class="row" style="color:#444;font-size:10px;">
+                  <div>
+                      <nav class="nav nav-tabs" id="myTab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-expanded="true">
+                          Search
+                        </a>
+                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile">
+                          Application Request
+                        </a>
+                        <a class="nav-item nav-link" id="nav-config-tab" data-toggle="tab" href="#nav-config" role="tab" aria-controls="nav-config">
+                          Config
+                        </a>
+                      </nav>
+                      <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                          <table class="table table-hover table-sm">
+                              ${searchRequestData}
+                              <tr>
+                                  <td class="font-weight-bold">journeys</td>
+                                  <td>
+                                      ${renderHorizontalTable(['departure', 'arrival', 'date'], searchRequest.journeys)}
+                                  </td>
+                              </tr>
+                          </table>
+                          <table class="table table-hover table-sm">
+                              <tr>
+                                  <td>${transportsLinks}</td>
+                                  <td><a target="_blank" href="${_links['packages'].replace('http://', 'https://')}">Packages</a></td>
+                                  <td><a target="_blank" href="${_links['combinations'].replace('http://', 'https://')}">Combinations</a></td>
+                              </tr>
+                          </table>
+                          ${statusBox}
                         </div>
-                    </div>
-                </div>`;
+                        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                          <table class="table table-hover table-sm">
+                              ${applicationRequestData}
+                           </table>
+                        </div>
+                        <div class="tab-pane fade" id="nav-config" role="tabpanel" aria-labelledby="nav-config-tab">
+                            ${providerConfig}
+                            ${providerJourneyConfig}
+                            ${requestInfo}
+                        </div>
+                      </div>
+                  </div>
+              </div>`;
 
   return {
     view: view,
