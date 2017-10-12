@@ -1,5 +1,6 @@
 const TRANSPORT_TYPE = 'TRANSPORT';
 const URL_RULE_PATH = '/vuelos/resultados_ajax';
+const URL_API_COMBINATIONS = '*://*/apitransport/combinations';
 
 let storage = chrome.storage.local;
 
@@ -42,7 +43,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     }
   },
   {
-    urls: ["*://*/apitransport/combinations"],
+    urls: [URL_API_COMBINATIONS],
     types: ["xmlhttprequest"]
   },
   ["requestBody"]
@@ -105,11 +106,10 @@ function processResultsData(data) {
 
 function generateFormData(data) {
   let formData = new FormData();
-  let keys = Object.keys(data);
 
-  for (let i = 0; i < keys.length; i++) {
-    formData.append(keys[i], data[keys[i]][0]);
-  }
+  Object.keys(data).forEach((key) => {
+    formData.append(key, data[key][0]);
+  });
 
   return formData;
 }
@@ -117,6 +117,8 @@ function generateFormData(data) {
 function sendMessage(message) {
   chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
     let lastTabId = tabs[0].id;
-    chrome.tabs.sendMessage(lastTabId, message);
+    if (lastTabId) {
+      chrome.tabs.sendMessage(lastTabId, message);
+    }
   });
 }

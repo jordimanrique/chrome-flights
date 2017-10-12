@@ -74,6 +74,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var TRANSPORT_TYPE = 'TRANSPORT';
 var URL_RULE_PATH = '/vuelos/resultados_ajax';
+var URL_API_COMBINATIONS = '*://*/apitransport/combinations';
 
 var storage = chrome.storage.local;
 
@@ -110,7 +111,7 @@ chrome.webRequest.onBeforeRequest.addListener(function (details) {
     }
   }
 }, {
-  urls: ["*://*/apitransport/combinations"],
+  urls: [URL_API_COMBINATIONS],
   types: ["xmlhttprequest"]
 }, ["requestBody"]);
 
@@ -170,11 +171,10 @@ function processResultsData(data) {
 
 function generateFormData(data) {
   var formData = new FormData();
-  var keys = Object.keys(data);
 
-  for (var i = 0; i < keys.length; i++) {
-    formData.append(keys[i], data[keys[i]][0]);
-  }
+  Object.keys(data).forEach(function (key) {
+    formData.append(key, data[key][0]);
+  });
 
   return formData;
 }
@@ -182,7 +182,9 @@ function generateFormData(data) {
 function sendMessage(message) {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var lastTabId = tabs[0].id;
-    chrome.tabs.sendMessage(lastTabId, message);
+    if (lastTabId) {
+      chrome.tabs.sendMessage(lastTabId, message);
+    }
   });
 }
 
