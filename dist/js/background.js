@@ -70,9 +70,12 @@
 "use strict";
 
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _DataTransformer = __webpack_require__(1);
 
-var TRANSPORT_TYPE = 'TRANSPORT';
+var _DataTransformer2 = _interopRequireDefault(_DataTransformer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var URL_RULE_PATH = '/vuelos/resultados_ajax';
 var URL_API_COMBINATIONS = '*://*/apitransport/combinations';
 
@@ -103,7 +106,7 @@ chrome.webRequest.onBeforeRequest.addListener(function (details) {
       }).then(function (response) {
         return response.json();
       }).then(function (data) {
-        data = processResultsData(data);
+        data = new _DataTransformer2.default().transform(data);
         storage.set({ 'results': data }, function () {
           sendMessage({ type: 'NEW_RESULTS' });
         });
@@ -121,53 +124,6 @@ chrome.commands.onCommand.addListener(function (command) {
     payload: command
   });
 });
-
-function processResultsData(data) {
-  var flightResults = function (combinations) {
-    return combinations.reduce(function (prev, combination) {
-      var identity = combination.identity;
-      var type = combination.type === TRANSPORT_TYPE ? 'transports' : 'packages';
-      prev[identity] = {
-        type: combination.type
-      };
-
-      if (type === 'packages') {
-        combination[type].forEach(function (_package) {
-          var transports = _package.transports;
-          Object.keys(transports).forEach(function (key) {
-            transports[key].forEach(function (transport) {
-              prev[transport.id] = {
-                provider: transport.provider,
-                id: transport.id,
-                type: combination.type,
-                plating_carrier: transport.plating_carrier,
-                price_lines: _package.price_lines
-              };
-            });
-          });
-        });
-
-        return prev;
-      }
-
-      Object.keys(combination[type]).forEach(function (key) {
-        combination[type][key].forEach(function (transport) {
-          prev[transport.id] = {
-            provider: transport.provider,
-            id: transport.id,
-            type: combination.type,
-            plating_carrier: transport.plating_carrier,
-            price_lines: transport.price_lines
-          };
-        });
-      });
-
-      return prev;
-    }, {});
-  }(data.data.combinations);
-
-  return _extends({}, data, { flightResults: flightResults });
-}
 
 function generateFormData(data) {
   var formData = new FormData();
@@ -187,6 +143,85 @@ function sendMessage(message) {
     }
   });
 }
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TRANSPORT_TYPE = 'TRANSPORT';
+
+var DataTransformer = function () {
+  function DataTransformer() {
+    _classCallCheck(this, DataTransformer);
+  }
+
+  _createClass(DataTransformer, [{
+    key: 'transform',
+    value: function transform(data) {
+      var flightResults = function (combinations) {
+        return combinations.reduce(function (prev, combination) {
+          var identity = combination.identity;
+          var type = combination.type === TRANSPORT_TYPE ? 'transports' : 'packages';
+          prev[identity] = {
+            type: combination.type
+          };
+
+          if (type === 'packages') {
+            combination[type].forEach(function (_package) {
+              var transports = _package.transports;
+              Object.keys(transports).forEach(function (key) {
+                transports[key].forEach(function (transport) {
+                  prev[transport.id] = {
+                    provider: transport.provider,
+                    id: transport.id,
+                    type: combination.type,
+                    plating_carrier: transport.plating_carrier,
+                    price_lines: _package.price_lines
+                  };
+                });
+              });
+            });
+
+            return prev;
+          }
+
+          Object.keys(combination[type]).forEach(function (key) {
+            combination[type][key].forEach(function (transport) {
+              prev[transport.id] = {
+                provider: transport.provider,
+                id: transport.id,
+                type: combination.type,
+                plating_carrier: transport.plating_carrier,
+                price_lines: transport.price_lines
+              };
+            });
+          });
+
+          return prev;
+        }, {});
+      }(data.data.combinations);
+
+      return _extends({}, data, { flightResults: flightResults });
+    }
+  }]);
+
+  return DataTransformer;
+}();
+
+exports.default = DataTransformer;
 
 /***/ })
 /******/ ]);
