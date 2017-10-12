@@ -31,28 +31,31 @@
   "commands": {
     "toggle-info": {
       "suggested_key": {
-        "default": "Alt+Shift+I",
+        "default": "Alt+Shift+1",
         "linux": "Alt+Shift+1"
       },
       "description": "Show or hide transports and packages"
     },
-    "toggle-transports": {
+    "only-transports": {
       "suggested_key": {
-        "default": "Alt+Shift+T",
+        "default": "Alt+Shift+2",
         "linux": "Alt+Shift+2"
       },
-      "description": "Show or hide transports"
+      "description": "Show only transports"
     },
-    "toggle-packages": {
+    "only-packages": {
       "suggested_key": {
-        "default": "Alt+Shift+P",
+        "default": "Alt+Shift+3",
         "linux": "Alt+Shift+3"
       },
-      "description": "Show or hide packages"
+      "description": "Show only packages"
     },
-    "_execute_page_action": {
-      "suggested_key": { "default": "Alt+Shift+F" },
-      "description": "Show TransportSearchRequest info"
+    "show-all": {
+      "suggested_key": {
+        "default": "Alt+Shift+0",
+        "linux": "Alt+Shift+0"
+      },
+      "description": "Show packages and transports"
     }
   }
 }

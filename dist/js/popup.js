@@ -76,14 +76,14 @@ var storage = chrome.storage.local;
 chrome.storage.onChanged.addListener(function (changes) {
   if (changes.results) {
     var data = changes.results.newValue.data;
-    window.data = data;
+    window.data = changes.results.newValue;
     renderView(data);
   }
 });
 
 storage.get({ 'results': [] }, function (items) {
   var data = items.results.data;
-  window.data = data;
+  window.data = items.results;
   renderView(data);
 });
 

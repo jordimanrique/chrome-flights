@@ -3,14 +3,14 @@ const storage = chrome.storage.local;
 chrome.storage.onChanged.addListener((changes) => {
   if (changes.results) {
     const data = changes.results.newValue.data;
-    window.data = data;
+    window.data = changes.results.newValue;
     renderView(data);
   }
 });
 
 storage.get({'results': []}, (items) => {
   const data = items.results.data;
-  window.data = data;
+  window.data = items.results;
   renderView(data);
 });
 

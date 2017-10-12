@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 - New development environment with webpack and babel to use ES6
 - New shortcuts for linux
 
+### Changed
+- Shortcuts behaviour. Show only transports, packages o all.
+
 ## [0.1.0] - 2017-10-11
 ### Added
 - Popup view with search request info.
