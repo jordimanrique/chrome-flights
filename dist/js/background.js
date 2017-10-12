@@ -139,7 +139,8 @@ function processResultsData(data) {
                 provider: transport.provider,
                 id: transport.id,
                 type: combination.type,
-                plating_carrier: transport.plating_carrier
+                plating_carrier: transport.plating_carrier,
+                price_lines: _package.price_lines
               };
             });
           });
@@ -154,7 +155,8 @@ function processResultsData(data) {
             provider: transport.provider,
             id: transport.id,
             type: combination.type,
-            plating_carrier: transport.plating_carrier
+            plating_carrier: transport.plating_carrier,
+            price_lines: transport.price_lines
           };
         });
       });
