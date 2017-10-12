@@ -15,3 +15,10 @@ Watch mode for webpack
 Create dist files
 
     npm run build
+    
+## How to install
+
+- Go to [chrome://extensions](chrome://extensions)
+- Activate developmer mode
+- Click on load uncompressed extension
+- Select the dist folder

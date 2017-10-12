@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [0.2.0] - 2017-10-16
 ### Added
 - New development environment with webpack and babel to use ES6
-- New shortcuts for windows, mac and linux
+- New shortcuts for linux
 
 ## [0.1.0] - 2017-10-11
 ### Added
