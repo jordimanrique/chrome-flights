@@ -184,7 +184,7 @@ var DataTransformer = function () {
               var transports = _package.transports;
               Object.keys(transports).forEach(function (key) {
                 transports[key].forEach(function (transport) {
-                  prev[transport.id] = {
+                  prev[identity][transport.id] = {
                     provider: transport.provider,
                     id: transport.id,
                     type: combination.type,
@@ -200,7 +200,7 @@ var DataTransformer = function () {
 
           Object.keys(combination[type]).forEach(function (key) {
             combination[type][key].forEach(function (transport) {
-              prev[transport.id] = {
+              prev[identity][transport.id] = {
                 provider: transport.provider,
                 id: transport.id,
                 type: combination.type,

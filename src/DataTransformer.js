@@ -15,7 +15,7 @@ class DataTransformer {
             let transports = _package.transports;
             Object.keys(transports).forEach((key) => {
               transports[key].forEach((transport) => {
-                prev[transport.id] = {
+                prev[identity][transport.id] = {
                   provider: transport.provider,
                   id: transport.id,
                   type: combination.type,
@@ -31,7 +31,7 @@ class DataTransformer {
 
         Object.keys(combination[type]).forEach((key) => {
           combination[type][key].forEach((transport) => {
-            prev[transport.id] = {
+            prev[identity][transport.id] = {
               provider: transport.provider,
               id: transport.id,
               type: combination.type,
