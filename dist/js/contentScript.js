@@ -65,7 +65,7 @@ function processResultsBoxes(flightResults) {
           `<div style="position:relative;">
                     <div class="chrome-flights__box hidden"
                          data-id = "${data.id}"
-                         style="position:absolute; top:0; right:0; left:0; z-index:1;background:${getColor(data.type)};padding:2px 12px;font-size:10px;">
+                         style="position:absolute; top:0; right:0; left:0; z-index:1;background:${getColor(data.type)};padding:2px 12px;font-size:10px;cursor:pointer;">
                         ${title}
                     </div>
                 </div>`);
