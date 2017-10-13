@@ -33,7 +33,7 @@ function showTransportInfo(transportId) {
            `;
         }, '');
 
-        $.colorbox({title: "Price Lines", html: "<table>" + headers + priceLines + "</table>", height:'75%'});
+        $.colorbox({title: "Price Lines " + transportId,  html: "<table>" + headers + priceLines + "</table>", height:'75%'});
     });
 
 }
