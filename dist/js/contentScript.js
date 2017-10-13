@@ -2,15 +2,28 @@ const TRANSPORT_TYPE = 'TRANSPORT';
 
 let storage = chrome.storage.local;
 
+function getAndShowResults(callback) {
+    storage.get({'results': []}, (items) => {
+        const flightResults = items.results && items.results.flightResults;
+        processResultsBoxes(flightResults);
+        callback();
+    });
+}
+
+
 chrome.runtime.onMessage.addListener((message) => {
   switch (message.type) {
-    case 'NEW_RESULTS':
-      processResultsBoxes();
-      break;
     case 'COMMAND':
       switch (message.payload) {
         case 'toggle-info':
-          $('div.chrome-flights__box').toggleClass('hidden');
+          var boxes = $('div.chrome-flights__box');
+
+          if (boxes.length === 0) {
+            getAndShowResults(function (){
+                $('div.chrome-flights__box').removeClass('hidden');
+            });
+          }
+          boxes.toggleClass('hidden');
           break;
         case 'only-packages':
           $('.chrome-flights__PACKAGE').removeClass('hidden');
@@ -28,10 +41,7 @@ chrome.runtime.onMessage.addListener((message) => {
   }
 });
 
-function processResultsBoxes() {
-  storage.get({'results': []}, function (items) {
-    const flightResults = items.results && items.results.flightResults;
-
+function processResultsBoxes(flightResults) {
     if (!flightResults) {
       alert('Atrapalo Flights: No Results found');
       return;
@@ -51,7 +61,7 @@ function processResultsBoxes() {
         $(this).before(
           `<div style="position:relative;">
                     <div class="chrome-flights__box hidden" 
-                         style="position:absolute; top:0; right:0; left:0; z-index:100;background:${getColor(data.type)};padding:2px 12px;font-size:10px;">
+                         style="position:absolute; top:0; right:0; left:0; z-index:1;background:${getColor(data.type)};padding:2px 12px;font-size:10px;">
                         ${title}
                     </div>
                 </div>`);
@@ -73,7 +83,6 @@ function processResultsBoxes() {
                 </div>`);
       }
     });
-  });
 }
 
 function getColor(transportType) {
@@ -83,5 +92,3 @@ function getColor(transportType) {
 
   return 'rgba(46, 188, 30, 0.2)';
 }
-
-setTimeout(processResultsBoxes, 7000);
