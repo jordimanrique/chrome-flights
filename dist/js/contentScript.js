@@ -11,7 +11,31 @@ function getAndShowResults(callback) {
 }
 
 function showTransportInfo(transportId) {
-    $.colorbox({html:"<h1>" + transportId + "</h1>"});
+    storage.get({'results': []}, (items) => {
+        const flightResults = items.results && items.results.flightResults;
+        const data = flightResults[transportId];
+
+        const headers = `<tr style="padding:3px; font-weight: bold;">
+                            <td style="padding: 3px;">Quantity</td>
+                            <td>Price</td>
+                            <td>Type</td>
+                            <td>Payment Method</td>
+                        </tr>`;
+
+        const priceLines = data.price_lines.reduce((prev, priceLine) => {
+           return  `${prev}
+                    <tr>
+                        <td style="padding: 2px 5px;">${priceLine.quantity}</td>
+                        <td style="padding: 2px 5px;">${priceLine.price.amount}${priceLine.price.currency}</td>
+                        <td style="padding: 2px 5px;">${priceLine.type}</td>
+                        <td style="padding: 2px 5px;">${priceLine.payment_method ? priceLine.payment_method : ''}</td>
+                    </tr>
+           `;
+        }, '');
+
+        $.colorbox({title: "Price Lines", html: "<table>" + headers + priceLines + "</table>", height:'75%'});
+    });
+
 }
 
 chrome.runtime.onMessage.addListener((message) => {
