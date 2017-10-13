@@ -23,10 +23,10 @@ Testing
     yarn test
     yarn test:watch
     
-## How to install
+## Install the extension
 
 - [Remove previous version if exists]
-- Go to [chrome://extensions](chrome://extensions)
-- Activate developer mode
-- Click on load unpacked extension
-- Select the dist folder
+- Visit [chrome://extensions](chrome://extensions) in your browser
+- Ensure that the _Developer mode_ checkbox in the top right-hand corner is checked.
+- Click Load unpacked extension? to pop up a file-selection dialog.
+- Navigate to the directory in which your extension files live, and select it.
