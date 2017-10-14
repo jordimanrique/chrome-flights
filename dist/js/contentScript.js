@@ -14,26 +14,37 @@ function showTransportInfo(combinationId, transportId) {
     storage.get({'results': []}, (items) => {
         const flightResults = items.results && items.results.flightResults;
         const data = flightResults[combinationId][transportId];
+        const priceLines = data.price_lines;
 
         const headers = `<tr style="padding:3px; font-weight: bold;">
-                            <td style="padding: 3px;">Quantity</td>
-                            <td>Price</td>
-                            <td>Type</td>
-                            <td>Payment Method</td>
-                        </tr>`;
+                              <td style="padding: 2px 5px;">Type</td>
+                              <td style="padding: 2px 5px;">Price</td>
+                              <td style="padding: 2px 5px;">Quantity</td>
+                              <td style="padding: 2px 5px;">Payment Method</td>
+                          </tr>`;
+        let rows = '';
 
-        const priceLines = data.price_lines.reduce((prev, priceLine) => {
-           return  `${prev}
+        Object.keys(priceLines).forEach((type) => {
+          let lines = priceLines[type];
+
+          rows += lines.reduce((prev, priceLine) => {
+
+            priceLine = priceLine.split('|');
+
+            return `${prev}
                     <tr>
-                        <td style="padding: 2px 5px;">${priceLine.quantity}</td>
-                        <td style="padding: 2px 5px;">${priceLine.price.amount}${priceLine.price.currency}</td>
-                        <td style="padding: 2px 5px;">${priceLine.type}</td>
-                        <td style="padding: 2px 5px;">${priceLine.payment_method ? priceLine.payment_method : ''}</td>
+                        <td style="padding: 2px 5px;">${type}</td>
+                        <td style="padding: 2px 5px; white-space: nowrap;">${priceLine[0]}</td>
+                        <td style="padding: 2px 5px;">${priceLine[1]}</td>
+                        <td style="padding: 2px 5px;">${priceLine[2]}</td>
                     </tr>
            `;
-        }, '');
+          }, '');
+        });
 
-        $.colorbox({title: "Price Lines " + transportId,  html: "<table>" + headers + priceLines + "</table>", height:'75%'});
+        let info = `<table>${headers}${rows}</table>`;
+
+        $.colorbox({title: "Price Lines " + transportId,  html: info, height:'90%'});
     });
 
 }
