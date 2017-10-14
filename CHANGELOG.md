@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 - New development environment with webpack and babel to use ES6
 - New shortcuts for linux
 - Added price lines in data object (popup view).
+- Added top menu options.
 
 ### Changed
 - Shortcuts behaviour. Show only transports, packages o all.
