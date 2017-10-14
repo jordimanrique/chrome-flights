@@ -29,12 +29,19 @@
     "storage"
   ],
   "commands": {
+    "show-all": {
+      "suggested_key": {
+        "default": "Alt+Shift+0",
+        "linux": "Alt+Shift+0"
+      },
+      "description": "Show packages and transports"
+    },
     "toggle-info": {
       "suggested_key": {
         "default": "Alt+Shift+1",
         "linux": "Alt+Shift+1"
       },
-      "description": "Show or hide transports and packages"
+      "description": "Show or hide transports and packages info"
     },
     "only-transports": {
       "suggested_key": {
@@ -49,13 +56,6 @@
         "linux": "Alt+Shift+3"
       },
       "description": "Show only packages"
-    },
-    "show-all": {
-      "suggested_key": {
-        "default": "Alt+Shift+0",
-        "linux": "Alt+Shift+0"
-      },
-      "description": "Show packages and transports"
     }
   }
 }

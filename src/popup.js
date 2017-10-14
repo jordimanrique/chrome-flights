@@ -1,4 +1,6 @@
 const storage = chrome.storage.local;
+const manifest = chrome.runtime.getManifest();
+const version = manifest.version;
 
 chrome.storage.onChanged.addListener((changes) => {
   if (changes.results) {
@@ -24,16 +26,17 @@ function renderView(data) {
   }
 
   $(document).ready(function () {
-    const {view, total} = generateViewFromData(data);
+    const {view, total, version} = generateViewFromData(data);
     $('#container').html(view);
     $('#total').html(total);
+    $('#version').html(version);
 
     //Prevent chrome bug on resize popup
     setTimeout(function () {
       $('#container').css("border", "solid 1px transparent");
     }, 100);
   });
-};
+}
 
 function generateViewFromData(data) {
   const {search_request: searchRequest, application_request: applicationRequest} = data;
@@ -85,6 +88,14 @@ function generateViewFromData(data) {
     'journeys'
   ], searchRequest.provider_configurations);
 
+  const help = Object.keys(manifest.commands).reduce((prev, commandKey) => {
+    let command = manifest.commands[commandKey];
+
+    return `${prev}
+            <li class="list-group-item">${command.suggested_key.default} - ${command.description}</li>
+    `;
+  }, '');
+
   const requestInfo = renderHorizontalTable(
     Object.keys(searchRequest.type_request),
     searchRequest.type_request);
@@ -96,10 +107,13 @@ function generateViewFromData(data) {
                           Search
                         </a>
                         <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile">
-                          Application Request
+                          Request
                         </a>
                         <a class="nav-item nav-link" id="nav-config-tab" data-toggle="tab" href="#nav-config" role="tab" aria-controls="nav-config">
                           Config
+                        </a>
+                        <a class="nav-item nav-link" id="nav-help-tab" data-toggle="tab" href="#nav-help" role="tab" aria-controls="nav-help">
+                          Help
                         </a>
                       </nav>
                       <div class="tab-content" id="nav-tabContent">
@@ -132,13 +146,17 @@ function generateViewFromData(data) {
                             ${providerJourneyConfig}
                             ${requestInfo}
                         </div>
+                        <div class="tab-pane fade" id="nav-help" role="tabpanel" aria-labelledby="nav-help-tab">
+                            <ul class="list-group">${help}</ul>
+                        </div>
                       </div>
                   </div>
               </div>`;
 
   return {
-    view: view,
-    total: total
+    view,
+    version,
+    total
   };
 }
 
