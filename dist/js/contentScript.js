@@ -58,6 +58,7 @@ function toggleInfo() {
     });
   }
   boxes.toggleClass('hidden');
+  $('#chrome-flights-menu-info').toggleClass('button-atrapalo--white-bg');
 }
 
 function showOnly(type) {
@@ -65,44 +66,58 @@ function showOnly(type) {
     case 'packages':
       $('.chrome-flights__PACKAGE').removeClass('hidden');
       $('.chrome-flights__TRANSPORT').addClass('hidden');
-      break;
 
+      $('#chrome-flights-menu-packages').addClass('button-atrapalo--white-bg');
+      $('#chrome-flights-menu-transports, #chrome-flights-menu-all').removeClass('button-atrapalo--white-bg');
+      break;
     case 'transports':
       $('.chrome-flights__TRANSPORT').removeClass('hidden');
       $('.chrome-flights__PACKAGE').addClass('hidden');
-      break;
 
+      $('#chrome-flights-menu-transports').addClass('button-atrapalo--white-bg');
+      $('#chrome-flights-menu-packages, #chrome-flights-menu-all').removeClass('button-atrapalo--white-bg');
+      break;
     case 'all':
       $('.chrome-flights__TRANSPORT').removeClass('hidden');
       $('.chrome-flights__PACKAGE').removeClass('hidden');
+
+      $('#chrome-flights-menu-all').addClass('button-atrapalo--white-bg');
+      $('#chrome-flights-menu-packages, #chrome-flights-menu-transports').removeClass('button-atrapalo--white-bg');
       break;
   }
 }
 
+function showMenu() {
+  $('#chrome-flights-menu').toggleClass('hidden');
+  // setTimeout(function () {
+  //   $('#chrome-flights-menu').addClass('hidden');
+  // }, 5000);
+}
+
 $('header#header').append(
   `<div id="chrome-flights-menu" class="hidden" style="position:fixed; top: 5px; left: 50%; transform: translateX(-50%); z-index:100">
-      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo button-atrapalo--white-bg" id="chrome-flights-info">Info</button>
-      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo button-atrapalo--white-bg" id="chrome-flights-packages">Packages</button>
-      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo button-atrapalo--white-bg" id="chrome-flights-transports">Transports</button>
-      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo button-atrapalo--white-bg" id="chrome-flights-all">All</button>
+      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-info">Info</button>
+      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-packages">Packages</button>
+      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-transports">Transports</button>
+      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo button-atrapalo--white-bg" id="chrome-flights-menu-all">All</button>
   </div>`
 ).dblclick(function() {
-  $('#chrome-flights-menu').toggleClass('hidden');
+  showMenu();
 });
 
-$('#chrome-flights-info').click(function () {
+$('#chrome-flights-menu-info').click(function () {
   toggleInfo();
 });
 
-$('#chrome-flights-packages').click(function () {
+$('#chrome-flights-menu-packages').click(function () {
   showOnly('packages');
 });
 
-$('#chrome-flights-transports').click(function () {
+$('#chrome-flights-menu-transports').click(function () {
   showOnly('transports');
 });
 
-$('#chrome-flights-all').click(function () {
+$('#chrome-flights-menu-all').click(function () {
   showOnly('all');
 });
 
