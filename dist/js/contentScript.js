@@ -1,52 +1,112 @@
-const TRANSPORT_TYPE = 'TRANSPORT';
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ })
+/************************************************************************/
+/******/ ({
 
-let storage = chrome.storage.local;
+/***/ 3:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var TRANSPORT_TYPE = 'TRANSPORT';
+
+var storage = chrome.storage.local;
 
 function getAndShowResults(callback) {
-    storage.get({'results': []}, (items) => {
-        const flightResults = items.results && items.results.flightResults;
-        processResultsBoxes(flightResults);
-        callback();
-    });
+  storage.get({ 'results': [] }, function (items) {
+    var flightResults = items.results && items.results.flightResults;
+    processResultsBoxes(flightResults);
+    callback();
+  });
 }
 
 function showTransportInfo(combinationId, transportId) {
-    storage.get({'results': []}, (items) => {
-        const flightResults = items.results && items.results.flightResults;
-        const data = flightResults[combinationId][transportId];
-        const priceLines = data.price_lines;
+  storage.get({ 'results': [] }, function (items) {
+    var flightResults = items.results && items.results.flightResults;
+    var data = flightResults[combinationId][transportId];
+    var priceLines = data.price_lines;
 
-        const headers = `<tr style="padding:3px; font-weight: bold;">
-                              <td style="padding: 2px 5px;">Type</td>
-                              <td style="padding: 2px 5px;">Price</td>
-                              <td style="padding: 2px 5px;">Quantity</td>
-                              <td style="padding: 2px 5px;">Payment Method</td>
-                          </tr>`;
-        let rows = '';
+    var headers = '<tr style="padding:3px; font-weight: bold;">\n                              <td style="padding: 2px 5px;">Type</td>\n                              <td style="padding: 2px 5px;">Price</td>\n                              <td style="padding: 2px 5px;">Quantity</td>\n                              <td style="padding: 2px 5px;">Payment Method</td>\n                          </tr>';
+    var rows = '';
 
-        Object.keys(priceLines).forEach((type) => {
-          let lines = priceLines[type];
+    Object.keys(priceLines).forEach(function (type) {
+      var lines = priceLines[type];
 
-          rows += lines.reduce((prev, priceLine) => {
+      rows += lines.reduce(function (prev, priceLine) {
 
-            priceLine = priceLine.split('|');
+        priceLine = priceLine.split('|');
 
-            return `${prev}
-                    <tr>
-                        <td style="padding: 2px 5px;">${type}</td>
-                        <td style="padding: 2px 5px; white-space: nowrap;">${priceLine[0]}</td>
-                        <td style="padding: 2px 5px;">${priceLine[1]}</td>
-                        <td style="padding: 2px 5px;">${priceLine[2]}</td>
-                    </tr>
-           `;
-          }, '');
-        });
-
-        let info = `<table>${headers}${rows}</table>`;
-
-        $.colorbox({title: "Price Lines " + transportId, html: info});
+        return prev + '\n                    <tr>\n                        <td style="padding: 2px 5px;">' + type + '</td>\n                        <td style="padding: 2px 5px; white-space: nowrap;">' + priceLine[0] + '</td>\n                        <td style="padding: 2px 5px;">' + priceLine[1] + '</td>\n                        <td style="padding: 2px 5px;">' + priceLine[2] + '</td>\n                    </tr>\n           ';
+      }, '');
     });
 
+    var info = '<table>' + headers + rows + '</table>';
+
+    $.colorbox({ title: "Price Lines " + transportId, html: info });
+  });
 }
 
 function toggleInfo() {
@@ -94,14 +154,7 @@ function showMenu() {
   // }, 5000);
 }
 
-$('header#header').append(
-  `<div id="chrome-flights-menu" class="hidden" style="position:fixed; top: 5px; left: 50%; transform: translateX(-50%); z-index:100">
-      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-info">Info</button>
-      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-packages">Packages</button>
-      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-transports">Transports</button>
-      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo button-atrapalo--white-bg" id="chrome-flights-menu-all">All</button>
-  </div>`
-).dblclick(function() {
+$('header#header').append('<div id="chrome-flights-menu" class="hidden" style="position:fixed; top: 5px; left: 50%; transform: translateX(-50%); z-index:100">\n      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-info">Info</button>\n      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-packages">Packages</button>\n      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-transports">Transports</button>\n      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo button-atrapalo--white-bg" id="chrome-flights-menu-all">All</button>\n  </div>').dblclick(function () {
   showMenu();
 });
 
@@ -121,7 +174,7 @@ $('#chrome-flights-menu-all').click(function () {
   showOnly('all');
 });
 
-chrome.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener(function (message) {
   switch (message.type) {
     case 'COMMAND':
       switch (message.payload) {
@@ -142,53 +195,42 @@ chrome.runtime.onMessage.addListener((message) => {
 });
 
 function processResultsBoxes(flightResults) {
-    if (!flightResults) {
-      alert('Atrapalo Flights: No Results found');
-      return;
+  if (!flightResults) {
+    alert('Atrapalo Flights: No Results found');
+    return;
+  }
+
+  //Prevent unique boxes info.
+  $('.chrome-flights__box').remove();
+
+  //Set info in Combinations Boxes
+  $('article[data-combination-id]').each(function () {
+    var combinationId = $(this).data('combination-id');
+    var data = flightResults[combinationId];
+
+    if (data) {
+      var title = '[' + data.type + '] [CombinationId] ' + combinationId;
+      $(this).attr('title', title);
+      $(this).addClass('chrome-flights__' + data.type);
+      $(this).prepend('<div class="chrome-flights__box hidden" style="background:' + getColor(data.type) + ';padding:4px 12px;">\n                    ' + title + '\n                </div>');
+
+      //Set info in Transports
+      $(this).find('div.info-track').each(function () {
+        var id = $(this).attr('id');
+        var transportData = flightResults[combinationId][id];
+        if (transportData) {
+          var _title = '[' + transportData.provider + '] [' + transportData.plating_carrier + '] ' + transportData.id + ' ';
+          $(this).attr('title', _title);
+
+          $(this).before('<div style="position:relative;">\n                        <div class="chrome-flights__box hidden"\n                             data-combination-id = "' + combinationId + '"\n                             data-id = "' + transportData.id + '"\n                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:' + getColor(transportData.type) + ';padding:2px 12px;font-size:10px;cursor:pointer;">\n                            ' + _title + '\n                        </div>\n                    </div>');
+
+          $('.chrome-flights__box').click(function () {
+            showTransportInfo($(this).data('combination-id'), $(this).data('id'));
+          });
+        }
+      });
     }
-
-    //Prevent unique boxes info.
-    $('.chrome-flights__box').remove();
-
-    //Set info in Combinations Boxes
-    $('article[data-combination-id]').each(function () {
-      const combinationId = $(this).data('combination-id');
-      const data = flightResults[combinationId];
-
-      if (data) {
-        const title = `[${data.type}] [CombinationId] ${combinationId}`;
-        $(this).attr('title', title);
-        $(this).addClass(`chrome-flights__${data.type}`);
-        $(this).prepend(
-          `<div class="chrome-flights__box hidden" style="background:${getColor(data.type)};padding:4px 12px;">
-                    ${title}
-                </div>`);
-
-        //Set info in Transports
-        $(this).find('div.info-track').each(function () {
-          const id = $(this).attr('id');
-          const transportData = flightResults[combinationId][id];
-          if (transportData) {
-            const title = `[${transportData.provider}] [${transportData.plating_carrier}] ${transportData.id} `;
-            $(this).attr('title', title);
-
-            $(this).before(
-              `<div style="position:relative;">
-                        <div class="chrome-flights__box hidden"
-                             data-combination-id = "${combinationId}"
-                             data-id = "${transportData.id}"
-                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:${getColor(transportData.type)};padding:2px 12px;font-size:10px;cursor:pointer;">
-                            ${title}
-                        </div>
-                    </div>`);
-
-            $('.chrome-flights__box').click(function() {
-               showTransportInfo($(this).data('combination-id'), $(this).data('id'));
-            });
-          }
-        });
-      }
-    });
+  });
 }
 
 function getColor(transportType) {
@@ -198,3 +240,7 @@ function getColor(transportType) {
 
   return 'rgba(46, 188, 30, 0.2)';
 }
+
+/***/ })
+
+/******/ });
