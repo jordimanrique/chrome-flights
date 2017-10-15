@@ -101,7 +101,7 @@ function generateViewFromData(data) {
     searchRequest.type_request);
 
   let view = `<div class="row" style="color:#444;font-size:10px;">
-                  <div>
+                  <div class="col">
                       <nav class="nav nav-tabs" id="myTab" role="tablist">
                         <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-expanded="true">
                           Search
@@ -235,7 +235,11 @@ function renderHorizontalTable(properties, object) {
   }, '');
 
   return `<table class="table table-hover table-sm">
+            <thead>
                 ${headers}
+            </thead>    
+            <tbody>
                 ${rows}
+            </tbody>
             </table>`;
 }
