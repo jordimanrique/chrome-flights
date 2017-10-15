@@ -1,7 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [0.2.0] - 2017-10-16
+## [0.2.1] - 2017-10-15
+### Changed
+- Price lines box, avoid internal scrolling.
+
+## [0.2.0] - 2017-10-14
 ### Added
 - New development environment with webpack and babel to use ES6
 - New shortcuts for linux

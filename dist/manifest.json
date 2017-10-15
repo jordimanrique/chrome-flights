@@ -3,7 +3,7 @@
 
   "name": "Atrapalo Flights",
   "description": "Atrapalo Flights",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "icons": {
     "128" : "icons/aeroplane_128.png"
   },

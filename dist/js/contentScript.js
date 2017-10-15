@@ -44,7 +44,7 @@ function showTransportInfo(combinationId, transportId) {
 
         let info = `<table>${headers}${rows}</table>`;
 
-        $.colorbox({title: "Price Lines " + transportId,  html: info, height:'90%'});
+        $.colorbox({title: "Price Lines " + transportId, html: info});
     });
 
 }
