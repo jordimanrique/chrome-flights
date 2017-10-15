@@ -10,7 +10,7 @@ chrome.storage.onChanged.addListener((changes) => {
   }
 });
 
-storage.get({'results': []}, (items) => {
+storage.get('results', (items) => {
   const data = items.results.data;
   window.data = items.results;
   renderView(data);

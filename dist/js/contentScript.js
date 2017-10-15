@@ -76,7 +76,7 @@ var TRANSPORT_TYPE = 'TRANSPORT';
 var storage = chrome.storage.local;
 
 function getAndShowResults(callback) {
-  storage.get({ 'results': [] }, function (items) {
+  storage.get('results', function (items) {
     var flightResults = items.results && items.results.flightResults;
     processResultsBoxes(flightResults);
     callback();
@@ -84,7 +84,7 @@ function getAndShowResults(callback) {
 }
 
 function showTransportInfo(combinationId, transportId) {
-  storage.get({ 'results': [] }, function (items) {
+  storage.get('results', function (items) {
     var flightResults = items.results && items.results.flightResults;
     var data = flightResults[combinationId][transportId];
     var priceLines = data.price_lines;
@@ -224,7 +224,7 @@ function processResultsBoxes(flightResults) {
 
           $(this).before('<div style="position:relative;">\n                        <div class="chrome-flights__box hidden"\n                             data-combination-id = "' + combinationId + '"\n                             data-id = "' + transportData.id + '"\n                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:' + getColor(transportData.type) + ';padding:2px 12px;font-size:10px;cursor:pointer;">\n                            ' + _title + '\n                        </div>\n                    </div>');
 
-          $('.chrome-flights__box').click(function () {
+          $(this).parent().find('.chrome-flights__box').click(function () {
             showTransportInfo($(this).data('combination-id'), $(this).data('id'));
           });
         }

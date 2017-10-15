@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.2] - 2017-10-15
+### Changed
+- Fix get storage chrome extension.
+- Fix click events on flight boxes.
+
 ## [0.2.1] - 2017-10-15
 ### Changed
 - Price lines box, avoid internal scrolling.

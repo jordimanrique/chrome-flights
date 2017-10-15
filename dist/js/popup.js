@@ -83,7 +83,7 @@ chrome.storage.onChanged.addListener(function (changes) {
   }
 });
 
-storage.get({ 'results': [] }, function (items) {
+storage.get('results', function (items) {
   var data = items.results.data;
   window.data = items.results;
   renderView(data);

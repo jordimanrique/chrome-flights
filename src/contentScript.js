@@ -3,7 +3,7 @@ const TRANSPORT_TYPE = 'TRANSPORT';
 let storage = chrome.storage.local;
 
 function getAndShowResults(callback) {
-    storage.get({'results': []}, (items) => {
+    storage.get('results', (items) => {
         const flightResults = items.results && items.results.flightResults;
         processResultsBoxes(flightResults);
         callback();
@@ -11,7 +11,7 @@ function getAndShowResults(callback) {
 }
 
 function showTransportInfo(combinationId, transportId) {
-    storage.get({'results': []}, (items) => {
+    storage.get('results', (items) => {
         const flightResults = items.results && items.results.flightResults;
         const data = flightResults[combinationId][transportId];
         const priceLines = data.price_lines;
@@ -182,8 +182,8 @@ function processResultsBoxes(flightResults) {
                         </div>
                     </div>`);
 
-            $('.chrome-flights__box').click(function() {
-               showTransportInfo($(this).data('combination-id'), $(this).data('id'));
+            $(this).parent().find('.chrome-flights__box').click(function () {
+              showTransportInfo($(this).data('combination-id'), $(this).data('id'));
             });
           }
         });
