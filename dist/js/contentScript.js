@@ -63,15 +63,137 @@
 /******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 3:
+/******/ ([
+/* 0 */,
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var TRANSPORT_TYPE = 'TRANSPORT';
+
+var DataTransformer = function () {
+  function DataTransformer() {
+    _classCallCheck(this, DataTransformer);
+  }
+
+  _createClass(DataTransformer, [{
+    key: 'transform',
+    value: function transform(data) {
+      var flightResults = function (combinations) {
+        return combinations.reduce(function (prev, combination) {
+          var identity = combination.identity;
+          var type = combination.type === TRANSPORT_TYPE ? 'transports' : 'packages';
+          prev[identity] = {
+            type: combination.type
+          };
+
+          if (type === 'packages') {
+            combination[type].forEach(function (_package) {
+              var transports = _package.transports;
+              Object.keys(transports).forEach(function (key) {
+                transports[key].forEach(function (transport) {
+                  prev[identity][transport.id] = {
+                    provider: transport.provider,
+                    id: transport.id,
+                    type: combination.type,
+                    plating_carrier: transport.plating_carrier,
+                    price_lines: transformPriceLines(_package.price_lines)
+                  };
+                });
+              });
+            });
+
+            return prev;
+          }
+
+          Object.keys(combination[type]).forEach(function (key) {
+            combination[type][key].forEach(function (transport) {
+              prev[identity][transport.id] = {
+                provider: transport.provider,
+                id: transport.id,
+                type: combination.type,
+                plating_carrier: transport.plating_carrier,
+                price_lines: transformPriceLines(transport.price_lines)
+              };
+            });
+          });
+
+          return prev;
+        }, {});
+      }(data.data.combinations);
+
+      return _extends({}, data, { flightResults: flightResults });
+    }
+  }]);
+
+  return DataTransformer;
+}();
+
+function reduceToUniquePriceLines(priceLines) {
+  var uniqueLines = [];
+  var tempLines = {};
+
+  priceLines.forEach(function (priceLine) {
+    var key = '' + priceLine.price.amount + priceLine.price.currency + priceLine.type + (priceLine.payment_method ? priceLine.payment_method : '');
+
+    if (tempLines[key]) {
+      tempLines[key] = _extends({}, priceLine, { quantity: tempLines[key].quantity += priceLine.quantity });
+    } else {
+      tempLines[key] = priceLine;
+    }
+  });
+
+  Object.keys(tempLines).forEach(function (key) {
+    uniqueLines.push(tempLines[key]);
+  });
+
+  return uniqueLines;
+}
+
+function transformPriceLines(priceLines) {
+  var lines = {};
+
+  reduceToUniquePriceLines(priceLines).forEach(function (line) {
+    if (!lines[line.type]) {
+      lines[line.type] = [];
+    }
+
+    lines[line.type].push(line.price.amount + ' ' + line.price.currency + '|' + line.quantity + '|' + (line.payment_method ? line.payment_method : ''));
+  });
+
+  return lines;
+}
+
+exports.default = DataTransformer;
+
+/***/ }),
+/* 2 */,
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _DataTransformer = __webpack_require__(1);
+
+var _DataTransformer2 = _interopRequireDefault(_DataTransformer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TRANSPORT_TYPE = 'TRANSPORT';
+
 
 var storage = chrome.storage.local;
 
@@ -241,6 +363,20 @@ function getColor(transportType) {
   return 'rgba(46, 188, 30, 0.2)';
 }
 
-/***/ })
+var s = document.createElement('script');
+s.src = chrome.extension.getURL('js/ajaxResponse.js');
+s.onload = function () {
+  this.remove();
+};
 
-/******/ });
+(document.head || document.documentElement).appendChild(s);
+
+document.addEventListener('NEW_RESULTS', function (event) {
+  var data = event.detail;
+  data = new _DataTransformer2.default().transform(data);
+
+  storage.set({ 'results': data });
+});
+
+/***/ })
+/******/ ]);

@@ -1,4 +1,5 @@
 const TRANSPORT_TYPE = 'TRANSPORT';
+import DataTransformer from './DataTransformer';
 
 let storage = chrome.storage.local;
 
@@ -198,3 +199,19 @@ function getColor(transportType) {
 
   return 'rgba(46, 188, 30, 0.2)';
 }
+
+let s = document.createElement('script');
+s.src = chrome.extension.getURL('js/ajaxResponse.js');
+s.onload = function() {
+    this.remove();
+};
+
+(document.head || document.documentElement).appendChild(s);
+
+
+document.addEventListener('NEW_RESULTS', (event) => {
+    let data = event.detail;
+    data = (new DataTransformer()).transform(data);
+
+    storage.set({'results': data});
+});
