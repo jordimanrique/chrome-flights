@@ -1,3 +1,5 @@
+const API_URL = '/apitransport/combinations';
+
 (function () {
     var XHR = XMLHttpRequest.prototype;
     // Remember references to original methods
@@ -15,7 +17,7 @@
     // Implement "ajaxSuccess" functionality
     XHR.send = function (postData) {
         this.addEventListener('load', function () {
-            if (this._url === '/apitransport/combinations') {
+            if (this._url === API_URL) {
                 let event = new CustomEvent('NEW_RESULTS', { 'detail': JSON.parse(this.responseText) });
                 document.dispatchEvent(event);
             }

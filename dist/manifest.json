@@ -60,6 +60,6 @@
     }
   },
   "web_accessible_resources": [
-    "js/ajaxResponse.js"
+    "js/ajaxListener.js"
   ]
 }
