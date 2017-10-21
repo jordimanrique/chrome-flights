@@ -1,6 +1,5 @@
 {
   "manifest_version": 2,
-
   "name": "Atrapalo Flights",
   "description": "Atrapalo Flights",
   "version": "0.3.0",
@@ -12,7 +11,7 @@
     "default_popup": "html/popup.html"
   },
   "background": {
-    "persistent": true,
+    "persistent": false,
     "scripts": ["js/background.js"]
   },
   "content_scripts": [
@@ -25,7 +24,6 @@
   "permissions": [
     "activeTab",
     "declarativeContent",
-    "webRequest",
     "*://*/apitransport/*",
     "storage"
   ],

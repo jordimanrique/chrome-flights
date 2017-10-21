@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2017-10-21
+### Changed
+- remove webRequest dependency
+- change long-running extension (background persistent) to page Event.
+- fix hidden menu behaviour
+
 ## [0.2.2] - 2017-10-15
 ### Changed
 - Fix get storage chrome extension.
