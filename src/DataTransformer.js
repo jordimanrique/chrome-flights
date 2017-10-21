@@ -18,6 +18,7 @@ class DataTransformer {
                 prev[identity][transport.id] = {
                   provider: transport.provider,
                   id: transport.id,
+                  package_identity: _package.identity,
                   type: combination.type,
                   plating_carrier: transport.plating_carrier,
                   price_lines: transformPriceLines(_package.price_lines)

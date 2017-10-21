@@ -97,7 +97,7 @@ test('transform data package', () => {
         type: 'PACKAGE',
         packages: [
           {
-            identity: 'PackageId',
+            identity: 'PACKAGE_ID1',
             price_lines: [
               {
                 price: {
@@ -169,6 +169,7 @@ test('transform data package', () => {
     combinationIdA: {
       TRANSPORT_ID_2: {
         id: 'TRANSPORT_ID_2',
+        package_identity: 'PACKAGE_ID1',
         plating_carrier: 'IB',
         provider: 'GALILEO',
         type: 'PACKAGE',
@@ -185,6 +186,7 @@ test('transform data package', () => {
       },
       TRANSPORT_ID_1: {
         id: 'TRANSPORT_ID_1',
+        package_identity: 'PACKAGE_ID1',
         plating_carrier: 'IB',
         provider: 'GALILEO',
         type: 'PACKAGE',
