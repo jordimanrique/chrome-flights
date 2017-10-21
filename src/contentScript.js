@@ -29,8 +29,7 @@ function addInfoToResultsBoxes(flightResults) {
     const data = flightResults[combinationId];
 
     if (data) {
-      const title = `[${data.type}] [CombinationId] ${combinationId}`;
-      $(this).attr('title', title);
+      const title = `[${data.type}] [CombinationId:<span class="chrome-flights-copy">${combinationId}</span>]`;
       $(this).addClass(`chrome-flights__${data.type}`);
       $(this).prepend(
         `<div class="chrome-flights__box hidden" style="background:${getColor(data.type)};padding:4px 12px;">
@@ -42,8 +41,7 @@ function addInfoToResultsBoxes(flightResults) {
         const id = $(this).attr('id');
         const transportData = flightResults[combinationId][id];
         if (transportData) {
-          const title = `[${transportData.provider}] [${transportData.plating_carrier}] ${transportData.id} `;
-          $(this).attr('title', title);
+          const title = `[${transportData.provider}] [${transportData.plating_carrier}] <span class="chrome-flights-copy">${transportData.id}</span>`;
 
           $(this).before(
             `<div style="position:relative;">
@@ -51,15 +49,19 @@ function addInfoToResultsBoxes(flightResults) {
                              data-combination-id = "${combinationId}"
                              data-id = "${transportData.id}"
                              style="position:absolute; top:0; right:0; left:0; z-index:1;background:${getColor(transportData.type)};padding:2px 12px;font-size:10px;cursor:pointer;">
-                            ${title}
+                            ${title} <a href="#" class="chrome-flights__box-priceline" style="float:right;">[Price Lines]</a>
                         </div>
                     </div>`);
 
-          $(this).parent().find('.chrome-flights__box').click(function () {
-            showPriceLinesInfo($(this).data('combination-id'), $(this).data('id'));
+          $(this).parent().find('.chrome-flights__box-priceline').click(function () {
+            showPriceLinesInfo($(this).parent().data('combination-id'), $(this).parent().data('id'));
           });
         }
       });
+
+      $('.chrome-flights-copy').on('dblclick', function() {
+        copyToClipboard($(this));
+      }).css('color', 'cornflowerblue');
     }
   });
 }
@@ -183,6 +185,17 @@ function initMenu() {
   });
 }
 
+function copyToClipboard(element) {
+  let $temp = $("<input>");
+  $("body").append($temp);
+  const text = $(element).text();
+  $temp.val(text).select();
+  document.execCommand("copy");
+  $temp.remove();
+
+  chrome.runtime.sendMessage({type:'COPY', payload: text});
+}
+
 chrome.runtime.onMessage.addListener((message) => {
   switch (message.type) {
     case 'COMMAND':
@@ -217,5 +230,6 @@ document.addEventListener('NEW_RESULTS', (event) => {
 
   storage.set({'results': data}, () => {
     initMenu();
+    toggleInfo();
   });
 });

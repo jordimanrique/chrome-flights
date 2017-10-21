@@ -107,8 +107,7 @@ function addInfoToResultsBoxes(flightResults) {
     var data = flightResults[combinationId];
 
     if (data) {
-      var title = '[' + data.type + '] [CombinationId] ' + combinationId;
-      $(this).attr('title', title);
+      var title = '[' + data.type + '] [CombinationId:<span class="chrome-flights-copy">' + combinationId + '</span>]';
       $(this).addClass('chrome-flights__' + data.type);
       $(this).prepend('<div class="chrome-flights__box hidden" style="background:' + getColor(data.type) + ';padding:4px 12px;">\n                    ' + title + '\n                </div>');
 
@@ -117,16 +116,19 @@ function addInfoToResultsBoxes(flightResults) {
         var id = $(this).attr('id');
         var transportData = flightResults[combinationId][id];
         if (transportData) {
-          var _title = '[' + transportData.provider + '] [' + transportData.plating_carrier + '] ' + transportData.id + ' ';
-          $(this).attr('title', _title);
+          var _title = '[' + transportData.provider + '] [' + transportData.plating_carrier + '] <span class="chrome-flights-copy">' + transportData.id + '</span>';
 
-          $(this).before('<div style="position:relative;">\n                        <div class="chrome-flights__box hidden"\n                             data-combination-id = "' + combinationId + '"\n                             data-id = "' + transportData.id + '"\n                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:' + getColor(transportData.type) + ';padding:2px 12px;font-size:10px;cursor:pointer;">\n                            ' + _title + '\n                        </div>\n                    </div>');
+          $(this).before('<div style="position:relative;">\n                        <div class="chrome-flights__box hidden"\n                             data-combination-id = "' + combinationId + '"\n                             data-id = "' + transportData.id + '"\n                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:' + getColor(transportData.type) + ';padding:2px 12px;font-size:10px;cursor:pointer;">\n                            ' + _title + ' <a href="#" class="chrome-flights__box-priceline" style="float:right;">[Price Lines]</a>\n                        </div>\n                    </div>');
 
-          $(this).parent().find('.chrome-flights__box').click(function () {
-            showPriceLinesInfo($(this).data('combination-id'), $(this).data('id'));
+          $(this).parent().find('.chrome-flights__box-priceline').click(function () {
+            showPriceLinesInfo($(this).parent().data('combination-id'), $(this).parent().data('id'));
           });
         }
       });
+
+      $('.chrome-flights-copy').on('dblclick', function () {
+        copyToClipboard($(this));
+      }).css('color', 'cornflowerblue');
     }
   });
 }
@@ -231,6 +233,17 @@ function initMenu() {
   });
 }
 
+function copyToClipboard(element) {
+  var $temp = $("<input>");
+  $("body").append($temp);
+  var text = $(element).text();
+  $temp.val(text).select();
+  document.execCommand("copy");
+  $temp.remove();
+
+  chrome.runtime.sendMessage({ type: 'COPY', payload: text });
+}
+
 chrome.runtime.onMessage.addListener(function (message) {
   switch (message.type) {
     case 'COMMAND':
@@ -265,6 +278,7 @@ document.addEventListener('NEW_RESULTS', function (event) {
 
   storage.set({ 'results': data }, function () {
     initMenu();
+    toggleInfo();
   });
 });
 

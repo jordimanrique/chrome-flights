@@ -71,6 +71,7 @@
 
 
 var URL_RULE_PATH = '/vuelos/resultados_ajax';
+var NOTIFICATION_ID = 'atrapalo-flights-';
 
 chrome.runtime.onInstalled.addListener(function () {
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
@@ -98,6 +99,32 @@ function sendMessage(message) {
     }
   });
 }
+
+function sendNotification(type, message) {
+  chrome.notifications.create(NOTIFICATION_ID + type, {
+    type: "basic",
+    title: "Atrapalo Flights",
+    message: message,
+    iconUrl: "icons/aeroplane_128.png"
+  });
+}
+
+function clearNotification(type) {
+  var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
+
+  setTimeout(function () {
+    chrome.notifications.clear(NOTIFICATION_ID + type);
+  }, time);
+}
+
+chrome.runtime.onMessage.addListener(function (message) {
+  switch (message.type) {
+    case 'COPY':
+      sendNotification('copy', message.payload + ' copied');
+      clearNotification('copy');
+      break;
+  }
+});
 
 /***/ })
 /******/ ]);

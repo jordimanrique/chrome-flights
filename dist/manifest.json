@@ -25,7 +25,8 @@
     "activeTab",
     "declarativeContent",
     "*://*/apitransport/*",
-    "storage"
+    "storage",
+    "notifications"
   ],
   "commands": {
     "show-all": {
@@ -58,6 +59,7 @@
     }
   },
   "web_accessible_resources": [
-    "js/ajaxListener.js"
+    "js/ajaxListener.js",
+    "icons/aeroplane_128.png"
   ]
 }
