@@ -116,7 +116,7 @@ function addInfoToResultsBoxes(flightResults) {
         var id = $(this).attr('id');
         var transportData = flightResults[combinationId][id];
         if (transportData) {
-          var _title = '[' + transportData.provider + '] [' + transportData.plating_carrier + '] <span class="chrome-flights-copy">' + transportData.id + '</span>';
+          var _title = '[' + transportData.provider + '] [' + transportData.plating_carrier + '] <span class="chrome-flights-copy">' + (transportData.package_identity ? transportData.package_identity : transportData.id) + '</span>';
 
           $(this).before('<div style="position:relative;">\n                        <div class="chrome-flights__box hidden"\n                             data-combination-id = "' + combinationId + '"\n                             data-id = "' + transportData.id + '"\n                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:' + getColor(transportData.type) + ';padding:2px 12px;font-size:10px;">\n                            ' + _title + ' <a href="#" class="chrome-flights__box-priceline" style="float:right;">[Price Lines]</a>\n                        </div>\n                    </div>');
 

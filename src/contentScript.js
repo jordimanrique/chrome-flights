@@ -41,7 +41,7 @@ function addInfoToResultsBoxes(flightResults) {
         const id = $(this).attr('id');
         const transportData = flightResults[combinationId][id];
         if (transportData) {
-          const title = `[${transportData.provider}] [${transportData.plating_carrier}] <span class="chrome-flights-copy">${transportData.id}</span>`;
+          const title = `[${transportData.provider}] [${transportData.plating_carrier}] <span class="chrome-flights-copy">${transportData.package_identity ? transportData.package_identity: transportData.id}</span>`;
 
           $(this).before(
             `<div style="position:relative;">
