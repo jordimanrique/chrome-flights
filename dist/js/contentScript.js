@@ -120,7 +120,8 @@ function addInfoToResultsBoxes(flightResults) {
 
           $(this).before('<div style="position:relative;">\n                        <div class="chrome-flights__box hidden"\n                             data-combination-id = "' + combinationId + '"\n                             data-id = "' + transportData.id + '"\n                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:' + getColor(transportData.type) + ';padding:2px 12px;font-size:10px;cursor:pointer;">\n                            ' + _title + ' <a href="#" class="chrome-flights__box-priceline" style="float:right;">[Price Lines]</a>\n                        </div>\n                    </div>');
 
-          $(this).parent().find('.chrome-flights__box-priceline').click(function () {
+          $(this).parent().find('.chrome-flights__box-priceline').click(function (e) {
+            e.preventDefault();
             showPriceLinesInfo($(this).parent().data('combination-id'), $(this).parent().data('id'));
           });
         }

@@ -53,7 +53,8 @@ function addInfoToResultsBoxes(flightResults) {
                         </div>
                     </div>`);
 
-          $(this).parent().find('.chrome-flights__box-priceline').click(function () {
+          $(this).parent().find('.chrome-flights__box-priceline').click(function (e) {
+            e.preventDefault();
             showPriceLinesInfo($(this).parent().data('combination-id'), $(this).parent().data('id'));
           });
         }
