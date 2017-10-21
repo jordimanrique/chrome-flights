@@ -48,7 +48,7 @@ function addInfoToResultsBoxes(flightResults) {
                         <div class="chrome-flights__box hidden"
                              data-combination-id = "${combinationId}"
                              data-id = "${transportData.id}"
-                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:${getColor(transportData.type)};padding:2px 12px;font-size:10px;cursor:pointer;">
+                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:${getColor(transportData.type)};padding:2px 12px;font-size:10px;">
                             ${title} <a href="#" class="chrome-flights__box-priceline" style="float:right;">[Price Lines]</a>
                         </div>
                     </div>`);
@@ -62,7 +62,8 @@ function addInfoToResultsBoxes(flightResults) {
 
       $('.chrome-flights-copy').on('dblclick', function() {
         copyToClipboard($(this));
-      }).css('color', 'cornflowerblue');
+      }).css('color', 'cornflowerblue')
+        .css('cursor', 'pointer');
     }
   });
 }
