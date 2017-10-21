@@ -1,6 +1,6 @@
 import DataTransformer from './../src/DataTransformer';
 
-test('transport transform data', () => {
+test('transform data transport', () => {
   let data = {
     data: {
       combinations: [{
@@ -13,13 +13,13 @@ test('transport transform data', () => {
               plating_carrier: 'IB',
               provider: 'GALILEO',
               price_lines: [{
-                  price: {
-                    amount: "10",
-                    currency: 'EUR'
-                  },
-                  quantity: 1,
-                  type: "TICKET_BASE_PRICE_ADULT"
+                price: {
+                  amount: "10",
+                  currency: 'EUR'
                 },
+                quantity: 1,
+                type: "TICKET_BASE_PRICE_ADULT"
+              },
                 {
                   price: {
                     amount: "11.34",
@@ -74,7 +74,7 @@ test('transport transform data', () => {
           TICKET_BASE_PRICE_ADULT: [
             '10 EUR|1|'
           ],
-          SERVICE_FEE : [
+          SERVICE_FEE: [
             '11.34 EUR|1|MASTERCARD_CREDIT',
             '12.34 EUR|2|MASTERCARD_DEBIT',
             '12.35 EUR|1|MASTERCARD_DEBIT'
@@ -82,6 +82,124 @@ test('transport transform data', () => {
         }
       },
       type: 'TRANSPORT',
+    }
+  };
+
+  expect((new DataTransformer()).transform(data).flightResults)
+    .toEqual(expected);
+});
+
+test('transform data package', () => {
+  let data = {
+    data: {
+      combinations: [{
+        identity: "combinationIdA",
+        type: 'PACKAGE',
+        packages: [
+          {
+            identity: 'PackageId',
+            price_lines: [
+              {
+                price: {
+                  amount: "10",
+                  currency: 'EUR'
+                },
+                quantity: 1,
+                type: "TICKET_BASE_PRICE_ADULT"
+              },
+              {
+                price: {
+                  amount: "11.34",
+                  currency: 'EUR'
+                },
+                quantity: 1,
+                type: 'SERVICE_FEE',
+                payment_method: 'MASTERCARD_CREDIT'
+              },
+              {
+                price: {
+                  amount: "12.34",
+                  currency: 'EUR'
+                },
+                quantity: 1,
+                type: 'SERVICE_FEE',
+                payment_method: 'MASTERCARD_DEBIT'
+              },
+              {
+                price: {
+                  amount: "12.34",
+                  currency: 'EUR'
+                },
+                quantity: 1,
+                type: 'SERVICE_FEE',
+                payment_method: 'MASTERCARD_DEBIT'
+              },
+              {
+                price: {
+                  amount: "12.35",
+                  currency: 'EUR'
+                },
+                quantity: 1,
+                type: 'SERVICE_FEE',
+                payment_method: 'MASTERCARD_DEBIT'
+              }],
+            transports: {
+              'BCN|MAD': [
+                {
+                  id: 'TRANSPORT_ID_1',
+                  plating_carrier: 'IB',
+                  provider: 'GALILEO'
+                }
+              ],
+              'MAD|BCN': [
+                {
+                  id: 'TRANSPORT_ID_2',
+                  plating_carrier: 'IB',
+                  provider: 'GALILEO'
+                }
+              ]
+            }
+          }
+        ],
+      }]
+    }
+  };
+
+  let expected = {
+    combinationIdA: {
+      TRANSPORT_ID_2: {
+        id: 'TRANSPORT_ID_2',
+        plating_carrier: 'IB',
+        provider: 'GALILEO',
+        type: 'PACKAGE',
+        price_lines: {
+          TICKET_BASE_PRICE_ADULT: [
+            '10 EUR|1|'
+          ],
+          SERVICE_FEE: [
+            '11.34 EUR|1|MASTERCARD_CREDIT',
+            '12.34 EUR|2|MASTERCARD_DEBIT',
+            '12.35 EUR|1|MASTERCARD_DEBIT'
+          ]
+        }
+      },
+      TRANSPORT_ID_1: {
+        id: 'TRANSPORT_ID_1',
+        plating_carrier: 'IB',
+        provider: 'GALILEO',
+        type: 'PACKAGE',
+        price_lines: {
+          TICKET_BASE_PRICE_ADULT: [
+            '10 EUR|1|'
+          ],
+          SERVICE_FEE: [
+            '11.34 EUR|1|MASTERCARD_CREDIT',
+            '12.34 EUR|2|MASTERCARD_DEBIT',
+            '12.35 EUR|1|MASTERCARD_DEBIT'
+          ]
+        }
+      },
+      type: 'PACKAGE',
     }
   };
 

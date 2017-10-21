@@ -59,7 +59,7 @@ function reduceToUniquePriceLines(priceLines) {
     if (tempLines[key]) {
       tempLines[key] = {...priceLine, quantity: tempLines[key].quantity += priceLine.quantity};
     } else {
-      tempLines[key] = priceLine;
+      tempLines[key] = {...priceLine};
     }
   });
 
