@@ -159,6 +159,79 @@ test('transform data package', () => {
                 }
               ]
             }
+          },
+          {
+            identity: 'PACKAGE_ID2',
+            price_lines: [
+              {
+                price: {
+                  amount: "10",
+                  currency: 'EUR'
+                },
+                quantity: 1,
+                type: "TICKET_BASE_PRICE_ADULT"
+              },
+              {
+                price: {
+                  amount: "11.34",
+                  currency: 'EUR'
+                },
+                quantity: 1,
+                type: 'SERVICE_FEE',
+                payment_method: 'MASTERCARD_CREDIT'
+              },
+              {
+                price: {
+                  amount: "12.34",
+                  currency: 'EUR'
+                },
+                quantity: 1,
+                type: 'SERVICE_FEE',
+                payment_method: 'MASTERCARD_DEBIT'
+              },
+              {
+                price: {
+                  amount: "12.34",
+                  currency: 'EUR'
+                },
+                quantity: 1,
+                type: 'SERVICE_FEE',
+                payment_method: 'MASTERCARD_DEBIT'
+              },
+              {
+                price: {
+                  amount: "12.35",
+                  currency: 'EUR'
+                },
+                quantity: 1,
+                type: 'SERVICE_FEE',
+                payment_method: 'MASTERCARD_DEBIT'
+              },
+              {
+                price: {
+                  amount: "12.35",
+                  currency: 'EUR'
+                },
+                quantity: 1,
+                type: 'SERVICE_FEE',
+                payment_method: 'MASTERCARD_DEBIT'
+              }],
+            transports: {
+              'BCN|MAD': [
+                {
+                  id: 'TRANSPORT_ID_3',
+                  plating_carrier: 'IB',
+                  provider: 'GALILEO'
+                }
+              ],
+              'MAD|BCN': [
+                {
+                  id: 'TRANSPORT_ID_4',
+                  plating_carrier: 'IB',
+                  provider: 'GALILEO'
+                }
+              ]
+            }
           }
         ],
       }]
@@ -198,6 +271,40 @@ test('transform data package', () => {
             '11.34 EUR|1|MASTERCARD_CREDIT',
             '12.34 EUR|2|MASTERCARD_DEBIT',
             '12.35 EUR|1|MASTERCARD_DEBIT'
+          ]
+        }
+      },
+      TRANSPORT_ID_3: {
+        id: 'TRANSPORT_ID_3',
+        package_identity: 'PACKAGE_ID2',
+        plating_carrier: 'IB',
+        provider: 'GALILEO',
+        type: 'PACKAGE',
+        price_lines: {
+          TICKET_BASE_PRICE_ADULT: [
+            '10 EUR|1|'
+          ],
+          SERVICE_FEE: [
+            '11.34 EUR|1|MASTERCARD_CREDIT',
+            '12.34 EUR|2|MASTERCARD_DEBIT',
+            '12.35 EUR|2|MASTERCARD_DEBIT'
+          ]
+        }
+      },
+      TRANSPORT_ID_4: {
+        id: 'TRANSPORT_ID_4',
+        package_identity: 'PACKAGE_ID2',
+        plating_carrier: 'IB',
+        provider: 'GALILEO',
+        type: 'PACKAGE',
+        price_lines: {
+          TICKET_BASE_PRICE_ADULT: [
+            '10 EUR|1|'
+          ],
+          SERVICE_FEE: [
+            '11.34 EUR|1|MASTERCARD_CREDIT',
+            '12.34 EUR|2|MASTERCARD_DEBIT',
+            '12.35 EUR|2|MASTERCARD_DEBIT'
           ]
         }
       },
