@@ -232,6 +232,6 @@ document.addEventListener('NEW_RESULTS', (event) => {
 
   storage.set({'results': data}, () => {
     initMenu();
-    toggleInfo();
+    // toggleInfo();
   });
 });

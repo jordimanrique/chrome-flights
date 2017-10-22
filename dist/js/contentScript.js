@@ -286,7 +286,7 @@ document.addEventListener('NEW_RESULTS', function (event) {
 
   storage.set({ 'results': data }, function () {
     initMenu();
-    toggleInfo();
+    // toggleInfo();
   });
 });
 
