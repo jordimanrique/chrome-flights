@@ -94,14 +94,14 @@ function showPriceLinesInfo(combinationId, transportId) {
       let lines = priceLines[type];
 
       rows += lines.reduce((prev, priceLine) => {
-        priceLine = priceLine.split('|');
+        let [price, currency, quantity, paymentMethod] = priceLine.split('|');
 
         return `${prev}
                     <tr>
                         <td style="padding: 2px 5px;">${type}</td>
-                        <td style="padding: 2px 5px; white-space: nowrap;">${priceLine[0]}</td>
-                        <td style="padding: 2px 5px;">${priceLine[1]}</td>
-                        <td style="padding: 2px 5px;">${priceLine[2]}</td>
+                        <td style="padding: 2px 5px; white-space: nowrap;">${price} ${currency}</td>
+                        <td style="padding: 2px 5px;">${quantity}</td>
+                        <td style="padding: 2px 5px;">${paymentMethod}</td>
                     </tr>
            `;
       }, '');

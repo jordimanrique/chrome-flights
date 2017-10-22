@@ -72,12 +72,12 @@ test('transform data transport', () => {
         type: 'TRANSPORT',
         price_lines: {
           TICKET_BASE_PRICE_ADULT: [
-            '10 EUR|1|'
+            '10|EUR|1|'
           ],
           SERVICE_FEE: [
-            '11.34 EUR|1|MASTERCARD_CREDIT',
-            '12.34 EUR|2|MASTERCARD_DEBIT',
-            '12.35 EUR|1|MASTERCARD_DEBIT'
+            '11.34|EUR|1|MASTERCARD_CREDIT',
+            '12.34|EUR|2|MASTERCARD_DEBIT',
+            '12.35|EUR|1|MASTERCARD_DEBIT'
           ]
         }
       },
@@ -248,12 +248,12 @@ test('transform data package', () => {
         type: 'PACKAGE',
         price_lines: {
           TICKET_BASE_PRICE_ADULT: [
-            '10 EUR|1|'
+            '10|EUR|1|'
           ],
           SERVICE_FEE: [
-            '11.34 EUR|1|MASTERCARD_CREDIT',
-            '12.34 EUR|2|MASTERCARD_DEBIT',
-            '12.35 EUR|1|MASTERCARD_DEBIT'
+            '11.34|EUR|1|MASTERCARD_CREDIT',
+            '12.34|EUR|2|MASTERCARD_DEBIT',
+            '12.35|EUR|1|MASTERCARD_DEBIT'
           ]
         }
       },
@@ -265,12 +265,12 @@ test('transform data package', () => {
         type: 'PACKAGE',
         price_lines: {
           TICKET_BASE_PRICE_ADULT: [
-            '10 EUR|1|'
+            '10|EUR|1|'
           ],
           SERVICE_FEE: [
-            '11.34 EUR|1|MASTERCARD_CREDIT',
-            '12.34 EUR|2|MASTERCARD_DEBIT',
-            '12.35 EUR|1|MASTERCARD_DEBIT'
+            '11.34|EUR|1|MASTERCARD_CREDIT',
+            '12.34|EUR|2|MASTERCARD_DEBIT',
+            '12.35|EUR|1|MASTERCARD_DEBIT'
           ]
         }
       },
@@ -282,12 +282,12 @@ test('transform data package', () => {
         type: 'PACKAGE',
         price_lines: {
           TICKET_BASE_PRICE_ADULT: [
-            '10 EUR|1|'
+            '10|EUR|1|'
           ],
           SERVICE_FEE: [
-            '11.34 EUR|1|MASTERCARD_CREDIT',
-            '12.34 EUR|2|MASTERCARD_DEBIT',
-            '12.35 EUR|2|MASTERCARD_DEBIT'
+            '11.34|EUR|1|MASTERCARD_CREDIT',
+            '12.34|EUR|2|MASTERCARD_DEBIT',
+            '12.35|EUR|2|MASTERCARD_DEBIT'
           ]
         }
       },
@@ -299,12 +299,12 @@ test('transform data package', () => {
         type: 'PACKAGE',
         price_lines: {
           TICKET_BASE_PRICE_ADULT: [
-            '10 EUR|1|'
+            '10|EUR|1|'
           ],
           SERVICE_FEE: [
-            '11.34 EUR|1|MASTERCARD_CREDIT',
-            '12.34 EUR|2|MASTERCARD_DEBIT',
-            '12.35 EUR|2|MASTERCARD_DEBIT'
+            '11.34|EUR|1|MASTERCARD_CREDIT',
+            '12.34|EUR|2|MASTERCARD_DEBIT',
+            '12.35|EUR|2|MASTERCARD_DEBIT'
           ]
         }
       },

@@ -72,6 +72,8 @@
 "use strict";
 
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _DataTransformer = __webpack_require__(3);
 
 var _DataTransformer2 = _interopRequireDefault(_DataTransformer);
@@ -155,9 +157,14 @@ function showPriceLinesInfo(combinationId, transportId) {
       var lines = priceLines[type];
 
       rows += lines.reduce(function (prev, priceLine) {
-        priceLine = priceLine.split('|');
+        var _priceLine$split = priceLine.split('|'),
+            _priceLine$split2 = _slicedToArray(_priceLine$split, 4),
+            price = _priceLine$split2[0],
+            currency = _priceLine$split2[1],
+            quantity = _priceLine$split2[2],
+            paymentMethod = _priceLine$split2[3];
 
-        return prev + '\n                    <tr>\n                        <td style="padding: 2px 5px;">' + type + '</td>\n                        <td style="padding: 2px 5px; white-space: nowrap;">' + priceLine[0] + '</td>\n                        <td style="padding: 2px 5px;">' + priceLine[1] + '</td>\n                        <td style="padding: 2px 5px;">' + priceLine[2] + '</td>\n                    </tr>\n           ';
+        return prev + '\n                    <tr>\n                        <td style="padding: 2px 5px;">' + type + '</td>\n                        <td style="padding: 2px 5px; white-space: nowrap;">' + price + ' ' + currency + '</td>\n                        <td style="padding: 2px 5px;">' + quantity + '</td>\n                        <td style="padding: 2px 5px;">' + paymentMethod + '</td>\n                    </tr>\n           ';
       }, '');
     });
 
@@ -390,7 +397,7 @@ function transformPriceLines(priceLines) {
       lines[line.type] = [];
     }
 
-    lines[line.type].push(line.price.amount + ' ' + line.price.currency + '|' + line.quantity + '|' + (line.payment_method ? line.payment_method : ''));
+    lines[line.type].push(line.price.amount + '|' + line.price.currency + '|' + line.quantity + '|' + (line.payment_method ? line.payment_method : ''));
   });
 
   return lines;

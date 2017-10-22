@@ -79,7 +79,7 @@ function transformPriceLines(priceLines) {
       lines[line.type] = [];
     }
 
-    lines[line.type].push(`${line.price.amount} ${line.price.currency}|${line.quantity}|${line.payment_method ? line.payment_method : ''}`);
+    lines[line.type].push(`${line.price.amount}|${line.price.currency}|${line.quantity}|${line.payment_method ? line.payment_method : ''}`);
   });
 
   return lines;
