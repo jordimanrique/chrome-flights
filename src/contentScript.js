@@ -6,7 +6,9 @@ const storage = chrome.storage.local;
 function getAndShowResults(callback) {
   storage.get('results', (items) => {
     const flightResults = items.results && items.results.flightResults;
-    addInfoToResultsBoxes(flightResults);
+    const combinationLink = items.results.data.search_request._links.combinations.replace('http://', 'https://');
+
+    addInfoToResultsBoxes(flightResults, combinationLink);
 
     if (callback) {
       callback();
@@ -14,7 +16,7 @@ function getAndShowResults(callback) {
   });
 }
 
-function addInfoToResultsBoxes(flightResults) {
+function addInfoToResultsBoxes(flightResults, combinationLink) {
   if (!flightResults) {
     alert('Atrapalo Flights: No Results found');
     return;
@@ -29,27 +31,25 @@ function addInfoToResultsBoxes(flightResults) {
     const data = flightResults[combinationId];
 
     if (data) {
-      const title = `[${data.type}] [CombinationId:<span class="chrome-flights-copy">${combinationId}</span>]`;
       $(this).addClass(`chrome-flights__${data.type}`);
       $(this).prepend(
         `<div class="chrome-flights__box hidden" style="background:${getColor(data.type)};padding:4px 12px;">
-                    ${title}
-                </div>`);
+            ${`[${data.type}] [CombinationId:<a style="color:cornflowerblue" target="_blank" href="${combinationLink + '?identity=' + combinationId}">${combinationId}</a>]`}
+        </div>`);
 
       //Set info in Transports
       $(this).find('div.info-track').each(function () {
         const id = $(this).attr('id');
         const transportData = flightResults[combinationId][id];
         if (transportData) {
-          const title = `[${transportData.provider}] [${transportData.plating_carrier}] <span class="chrome-flights-copy">${transportData.package_identity ? transportData.package_identity: transportData.id}</span>`;
-
-          $(this).before(
+            $(this).before(
             `<div style="position:relative;">
                         <div class="chrome-flights__box hidden"
                              data-combination-id = "${combinationId}"
                              data-id = "${transportData.id}"
                              style="position:absolute; top:0; right:0; left:0; z-index:1;background:${getColor(transportData.type)};padding:2px 12px;font-size:10px;">
-                            ${title} <a href="#" class="chrome-flights__box-priceline" style="float:right;">[Price Lines]</a>
+                            ${`[${transportData.provider}] [${transportData.plating_carrier}] <span class="chrome-flights-copy">${transportData.package_identity ? transportData.package_identity: transportData.id}</span>`} 
+                            <a href="#" class="chrome-flights__box-priceline" style="float:right;color:cornflowerblue;">[Price Lines]</a>
                         </div>
                     </div>`);
 

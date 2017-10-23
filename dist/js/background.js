@@ -110,7 +110,7 @@ function sendNotification(type, message) {
 }
 
 function clearNotification(type) {
-  var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
+  var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2000;
 
   setTimeout(function () {
     chrome.notifications.clear(NOTIFICATION_ID + type);

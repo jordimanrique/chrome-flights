@@ -44,7 +44,7 @@ function sendNotification(type, message) {
   );
 }
 
-function clearNotification(type, time = 1000) {
+function clearNotification(type, time = 2000) {
   setTimeout(() => {
     chrome.notifications.clear(NOTIFICATION_ID + type);
   }, time);

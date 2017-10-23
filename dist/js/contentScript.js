@@ -86,7 +86,9 @@ var storage = chrome.storage.local;
 function getAndShowResults(callback) {
   storage.get('results', function (items) {
     var flightResults = items.results && items.results.flightResults;
-    addInfoToResultsBoxes(flightResults);
+    var combinationLink = items.results.data.search_request._links.combinations.replace('http://', 'https://');
+
+    addInfoToResultsBoxes(flightResults, combinationLink);
 
     if (callback) {
       callback();
@@ -94,7 +96,7 @@ function getAndShowResults(callback) {
   });
 }
 
-function addInfoToResultsBoxes(flightResults) {
+function addInfoToResultsBoxes(flightResults, combinationLink) {
   if (!flightResults) {
     alert('Atrapalo Flights: No Results found');
     return;
@@ -109,18 +111,15 @@ function addInfoToResultsBoxes(flightResults) {
     var data = flightResults[combinationId];
 
     if (data) {
-      var title = '[' + data.type + '] [CombinationId:<span class="chrome-flights-copy">' + combinationId + '</span>]';
       $(this).addClass('chrome-flights__' + data.type);
-      $(this).prepend('<div class="chrome-flights__box hidden" style="background:' + getColor(data.type) + ';padding:4px 12px;">\n                    ' + title + '\n                </div>');
+      $(this).prepend('<div class="chrome-flights__box hidden" style="background:' + getColor(data.type) + ';padding:4px 12px;">\n            ' + ('[' + data.type + '] [CombinationId:<a style="color:cornflowerblue" target="_blank" href="' + (combinationLink + '?identity=' + combinationId) + '">' + combinationId + '</a>]') + '\n        </div>');
 
       //Set info in Transports
       $(this).find('div.info-track').each(function () {
         var id = $(this).attr('id');
         var transportData = flightResults[combinationId][id];
         if (transportData) {
-          var _title = '[' + transportData.provider + '] [' + transportData.plating_carrier + '] <span class="chrome-flights-copy">' + (transportData.package_identity ? transportData.package_identity : transportData.id) + '</span>';
-
-          $(this).before('<div style="position:relative;">\n                        <div class="chrome-flights__box hidden"\n                             data-combination-id = "' + combinationId + '"\n                             data-id = "' + transportData.id + '"\n                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:' + getColor(transportData.type) + ';padding:2px 12px;font-size:10px;">\n                            ' + _title + ' <a href="#" class="chrome-flights__box-priceline" style="float:right;">[Price Lines]</a>\n                        </div>\n                    </div>');
+          $(this).before('<div style="position:relative;">\n                        <div class="chrome-flights__box hidden"\n                             data-combination-id = "' + combinationId + '"\n                             data-id = "' + transportData.id + '"\n                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:' + getColor(transportData.type) + ';padding:2px 12px;font-size:10px;">\n                            ' + ('[' + transportData.provider + '] [' + transportData.plating_carrier + '] <span class="chrome-flights-copy">' + (transportData.package_identity ? transportData.package_identity : transportData.id) + '</span>') + ' \n                            <a href="#" class="chrome-flights__box-priceline" style="float:right;color:cornflowerblue;">[Price Lines]</a>\n                        </div>\n                    </div>');
 
           $(this).parent().find('.chrome-flights__box-priceline').click(function (e) {
             e.preventDefault();
