@@ -114,11 +114,18 @@ function addInfoToResultsBoxes(flightResults, combinationLink) {
       $(this).addClass('chrome-flights__' + data.type);
       $(this).prepend('<div class="chrome-flights__box hidden" style="background:' + getColor(data.type) + ';padding:4px 12px;">\n            ' + ('[' + data.type + '] [CombinationId:<a style="color:cornflowerblue" target="_blank" href="' + (combinationLink + '?identity=' + combinationId) + '">' + combinationId + '</a>]') + '\n        </div>');
 
+      var provider = '';
+
       //Set info in Transports
       $(this).find('div.info-track').each(function () {
         var id = $(this).attr('id');
         var transportData = flightResults[combinationId][id];
         if (transportData) {
+          if (provider !== '' && provider !== transportData.provider) {
+            provider = '';
+          } else {
+            provider = transportData.provider;
+          }
           $(this).before('<div style="position:relative;">\n                        <div class="chrome-flights__box hidden"\n                             data-combination-id = "' + combinationId + '"\n                             data-id = "' + transportData.id + '"\n                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:' + getColor(transportData.type) + ';padding:2px 12px;font-size:10px;">\n                            ' + ('[' + transportData.provider + '] [' + transportData.plating_carrier + '] <span class="chrome-flights-copy">' + (transportData.package_identity ? transportData.package_identity : transportData.id) + '</span>') + ' \n                            <a href="#" class="chrome-flights__box-priceline" style="float:right;color:cornflowerblue;">[Price Lines]</a>\n                        </div>\n                    </div>');
 
           $(this).parent().find('.chrome-flights__box-priceline').click(function (e) {
@@ -127,6 +134,10 @@ function addInfoToResultsBoxes(flightResults, combinationLink) {
           });
         }
       });
+
+      if (provider !== '') {
+        $(this).addClass('chrome-flights__' + provider);
+      }
 
       $('.chrome-flights-copy').on('dblclick', function () {
         copyToClipboard($(this));
@@ -209,7 +220,18 @@ function showBoxesByType(type) {
       $('#chrome-flights-menu-all').addClass('button-atrapalo--white-bg');
       $('#chrome-flights-menu-packages, #chrome-flights-menu-transports').removeClass('button-atrapalo--white-bg');
       break;
+    case 'provider':
+      showBoxesByProvider();
+      break;
   }
+}
+
+function showBoxesByProvider() {
+
+  storage.get('provider', function (element) {
+    // TODO show or hide provider boxes
+    console.log('show ' + element.provider);
+  });
 }
 
 function initMenu() {
@@ -266,6 +288,9 @@ chrome.runtime.onMessage.addListener(function (message) {
           break;
         case 'show-all':
           showBoxesByType('all');
+          break;
+        case 'show-provider':
+          showBoxesByType('provider');
           break;
       }
   }

@@ -37,12 +37,19 @@ function addInfoToResultsBoxes(flightResults, combinationLink) {
             ${`[${data.type}] [CombinationId:<a style="color:cornflowerblue" target="_blank" href="${combinationLink + '?identity=' + combinationId}">${combinationId}</a>]`}
         </div>`);
 
+      let provider = '';
+
       //Set info in Transports
       $(this).find('div.info-track').each(function () {
         const id = $(this).attr('id');
         const transportData = flightResults[combinationId][id];
         if (transportData) {
-            $(this).before(
+          if (provider !== '' && provider !== transportData.provider) {
+            provider = '';
+          } else {
+            provider = transportData.provider;
+          }
+          $(this).before(
             `<div style="position:relative;">
                         <div class="chrome-flights__box hidden"
                              data-combination-id = "${combinationId}"
@@ -59,6 +66,10 @@ function addInfoToResultsBoxes(flightResults, combinationLink) {
           });
         }
       });
+
+      if (provider !== '') {
+        $(this).addClass(`chrome-flights__${provider}`);
+      }
 
       $('.chrome-flights-copy').on('dblclick', function() {
         copyToClipboard($(this));
@@ -149,7 +160,18 @@ function showBoxesByType(type) {
       $('#chrome-flights-menu-all').addClass('button-atrapalo--white-bg');
       $('#chrome-flights-menu-packages, #chrome-flights-menu-transports').removeClass('button-atrapalo--white-bg');
       break;
+    case 'provider':
+      showBoxesByProvider();
+      break;
   }
+}
+
+function showBoxesByProvider() {
+
+  storage.get('provider', (element) => {
+    // TODO show or hide provider boxes
+    console.log('show ' + element.provider);
+  });
 }
 
 function initMenu() {
@@ -213,6 +235,9 @@ chrome.runtime.onMessage.addListener((message) => {
           break;
         case 'show-all':
           showBoxesByType('all');
+          break;
+        case 'show-provider':
+          showBoxesByType('provider');
           break;
       }
   }

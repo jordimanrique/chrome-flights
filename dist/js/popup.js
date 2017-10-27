@@ -112,6 +112,16 @@ function renderView(data) {
     setTimeout(function () {
       $('#container').css("border", "solid 1px transparent");
     }, 100);
+
+    initEvents();
+  });
+}
+
+function initEvents() {
+
+  $('.badge').on('click', function (event) {
+
+    saveProvider(event.currentTarget.innerHTML);
   });
 }
 
@@ -156,6 +166,25 @@ function generateViewFromData(data) {
     version: version,
     total: total
   };
+}
+
+function saveProvider(provider) {
+
+  storage.set({ 'provider': provider }, function () {
+    sendMessage({
+      type: 'COMMAND',
+      payload: 'show-provider'
+    });
+  });
+}
+
+function sendMessage(message) {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    var lastTabId = tabs[0].id;
+    if (lastTabId) {
+      chrome.tabs.sendMessage(lastTabId, message);
+    }
+  });
 }
 
 function generateStatusBoxTable(status) {
