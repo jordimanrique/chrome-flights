@@ -60,12 +60,12 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 2:
+/******/ ([
+/* 0 */,
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75,31 +75,45 @@ var storage = chrome.storage.local;
 var manifest = chrome.runtime.getManifest();
 var version = manifest.version;
 
+var infoActive = false;
+
+storage.get(['results', 'showInfoActive'], function (items) {
+  var data = items.results.data;
+  window.data = items.results;
+  infoActive = items.showInfoActive;
+  renderView(data, infoActive);
+});
+
 chrome.storage.onChanged.addListener(function (changes) {
+
+  if (changes.showInfoActive) {
+    infoActive = changes.showInfoActive.newValue;
+  }
+
   if (changes.results) {
     var data = changes.results.newValue.data;
     window.data = changes.results.newValue;
-    renderView(data);
+    renderView(data, infoActive);
   }
-});
-
-storage.get('results', function (items) {
-  var data = items.results.data;
-  window.data = items.results;
-  renderView(data);
 });
 
 /*
  VIEWS
  */
 
+function showInfoActive(active) {
+  storage.set({ 'showInfoActive': active });
+}
+
 function renderView(data) {
+  var active = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
   if (!data) {
     return;
   }
 
   $(document).ready(function () {
-    var _generateViewFromData = generateViewFromData(data),
+    var _generateViewFromData = generateViewFromData(data, active),
         view = _generateViewFromData.view,
         total = _generateViewFromData.total,
         version = _generateViewFromData.version;
@@ -112,10 +126,14 @@ function renderView(data) {
     setTimeout(function () {
       $('#container').css("border", "solid 1px transparent");
     }, 100);
+
+    $('#show-info-active').change(function () {
+      showInfoActive($(this).is(":checked"));
+    });
   });
 }
 
-function generateViewFromData(data) {
+function generateViewFromData(data, active) {
   var searchRequest = data.search_request,
       applicationRequest = data.application_request;
 
@@ -149,7 +167,7 @@ function generateViewFromData(data) {
 
   var requestInfo = renderHorizontalTable(Object.keys(searchRequest.type_request), searchRequest.type_request);
 
-  var view = '<div class="row" style="color:#444;font-size:10px;">\n                  <div class="col">\n                      <nav class="nav nav-tabs" id="myTab" role="tablist">\n                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-expanded="true">\n                          Search\n                        </a>\n                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile">\n                          Request\n                        </a>\n                        <a class="nav-item nav-link" id="nav-config-tab" data-toggle="tab" href="#nav-config" role="tab" aria-controls="nav-config">\n                          Config\n                        </a>\n                        <a class="nav-item nav-link" id="nav-help-tab" data-toggle="tab" href="#nav-help" role="tab" aria-controls="nav-help">\n                          Help\n                        </a>\n                      </nav>\n                      <div class="tab-content" id="nav-tabContent">\n                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">\n                          <table class="table table-hover table-sm">\n                              ' + searchRequestData + '\n                              <tr>\n                                  <td class="font-weight-bold">journeys</td>\n                                  <td>\n                                      ' + renderHorizontalTable(['departure', 'arrival', 'date'], searchRequest.journeys) + '\n                                  </td>\n                              </tr>\n                          </table>\n                          <table class="table table-hover table-sm">\n                              <tr>\n                                  <td>' + transportsLinks + '</td>\n                                  <td><a target="_blank" href="' + _links['packages'].replace('http://', 'https://') + '">Packages</a></td>\n                                  <td><a target="_blank" href="' + _links['combinations'].replace('http://', 'https://') + '">Combinations</a></td>\n                              </tr>\n                          </table>\n                          ' + statusBox + '\n                        </div>\n                        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">\n                          <table class="table table-hover table-sm">\n                              ' + applicationRequestData + '\n                           </table>\n                        </div>\n                        <div class="tab-pane fade" id="nav-config" role="tabpanel" aria-labelledby="nav-config-tab">\n                            ' + providerConfig + '\n                            ' + providerJourneyConfig + '\n                            ' + requestInfo + '\n                        </div>\n                        <div class="tab-pane fade" id="nav-help" role="tabpanel" aria-labelledby="nav-help-tab">\n                            <ul class="list-group">' + help + '</ul>\n                        </div>\n                      </div>\n                  </div>\n              </div>';
+  var view = '<div class="row" style="color:#444;font-size:10px;">\n                  <div class="col">\n                      <nav class="nav nav-tabs" id="myTab" role="tablist">\n                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-expanded="true">\n                          Search\n                        </a>\n                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile">\n                          Request\n                        </a>\n                        <a class="nav-item nav-link" id="nav-config-tab" data-toggle="tab" href="#nav-config" role="tab" aria-controls="nav-config">\n                          Config\n                        </a>\n                        <a class="nav-item nav-link" id="nav-help-tab" data-toggle="tab" href="#nav-help" role="tab" aria-controls="nav-help">\n                          Help\n                        </a>\n                      </nav>\n                      <div class="tab-content" id="nav-tabContent">\n                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">\n                          <table class="table table-hover table-sm">\n                              ' + searchRequestData + '\n                              <tr>\n                                  <td class="font-weight-bold">journeys</td>\n                                  <td>\n                                      ' + renderHorizontalTable(['departure', 'arrival', 'date'], searchRequest.journeys) + '\n                                  </td>\n                              </tr>\n                          </table>\n                          <table class="table table-hover table-sm">\n                              <tr>\n                                  <td>' + transportsLinks + '</td>\n                                  <td><a target="_blank" href="' + _links['packages'].replace('http://', 'https://') + '">Packages</a></td>\n                                  <td><a target="_blank" href="' + _links['combinations'].replace('http://', 'https://') + '">Combinations</a></td>\n                              </tr>\n                          </table>\n                          ' + statusBox + '\n                          <div class="form-check">\n                            <label class="form-check-label">\n                              <input type="checkbox" id="show-info-active" class="form-check-input" ' + (active === true ? 'checked' : '') + '/>\n                              Active info in results page\n                            </label>\n                          </div>\n                        </div>\n                        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">\n                          <table class="table table-hover table-sm">\n                              ' + applicationRequestData + '\n                           </table>\n                        </div>\n                        <div class="tab-pane fade" id="nav-config" role="tabpanel" aria-labelledby="nav-config-tab">\n                            ' + providerConfig + '\n                            ' + providerJourneyConfig + '\n                            ' + requestInfo + '\n                        </div>\n                        <div class="tab-pane fade" id="nav-help" role="tabpanel" aria-labelledby="nav-help-tab">\n                            <ul class="list-group">' + help + '</ul>\n                        </div>\n                      </div>\n                  </div>\n              </div>';
 
   return {
     view: view,
@@ -225,5 +243,4 @@ function renderHorizontalTable(properties, object) {
 }
 
 /***/ })
-
-/******/ });
+/******/ ]);

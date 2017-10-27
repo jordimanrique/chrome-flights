@@ -18,6 +18,7 @@ class DataTransformer {
                 prev[identity][transport.id] = {
                   provider: transport.provider,
                   id: transport.id,
+                  package_identity: _package.identity,
                   type: combination.type,
                   plating_carrier: transport.plating_carrier,
                   price_lines: transformPriceLines(_package.price_lines)
@@ -59,7 +60,7 @@ function reduceToUniquePriceLines(priceLines) {
     if (tempLines[key]) {
       tempLines[key] = {...priceLine, quantity: tempLines[key].quantity += priceLine.quantity};
     } else {
-      tempLines[key] = priceLine;
+      tempLines[key] = {...priceLine};
     }
   });
 
@@ -78,7 +79,7 @@ function transformPriceLines(priceLines) {
       lines[line.type] = [];
     }
 
-    lines[line.type].push(`${line.price.amount} ${line.price.currency}|${line.quantity}|${line.payment_method ? line.payment_method : ''}`);
+    lines[line.type].push(`${line.price.amount}|${line.price.currency}|${line.quantity}|${line.payment_method ? line.payment_method : ''}`);
   });
 
   return lines;

@@ -1,9 +1,5 @@
-import DataTransformer from './DataTransformer';
-
 const URL_RULE_PATH = '/vuelos/resultados_ajax';
-const URL_API_COMBINATIONS = '*://*/apitransport/combinations';
-
-let storage = chrome.storage.local;
+const NOTIFICATION_ID = 'atrapalo-flights-';
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
@@ -20,52 +16,12 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-chrome.webRequest.onBeforeRequest.addListener(
-  (details) => {
-    if (details.type === "xmlhttprequest") {
-      let formData = details.requestBody.formData;
-      let url = details.url + '?_ce=true';
-
-      // storage.set({'results': {}});
-
-      if (formData) {
-        fetch(url, {
-          method: details.method,
-          body: generateFormData(formData),
-        }).then((response) => {
-          return response.json();
-        }).then((data) => {
-          data = (new DataTransformer()).transform(data);
-          storage.set({'results': data}, function () {
-            sendMessage({type: 'NEW_RESULTS'});
-          });
-        });
-      }
-    }
-  },
-  {
-    urls: [URL_API_COMBINATIONS],
-    types: ["xmlhttprequest"]
-  },
-  ["requestBody"]
-);
-
 chrome.commands.onCommand.addListener((command) => {
   sendMessage({
     type: 'COMMAND',
     payload: command
   })
 });
-
-function generateFormData(data) {
-  let formData = new FormData();
-
-  Object.keys(data).forEach((key) => {
-    formData.append(key, data[key][0]);
-  });
-
-  return formData;
-}
 
 function sendMessage(message) {
   chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
@@ -75,3 +31,30 @@ function sendMessage(message) {
     }
   });
 }
+
+function sendNotification(type, message) {
+  chrome.notifications.create(
+    NOTIFICATION_ID + type,
+    {
+      type: "basic",
+      title: "Atrapalo Flights",
+      message: message,
+      iconUrl: "icons/aeroplane_128.png"
+    }
+  );
+}
+
+function clearNotification(type, time = 2000) {
+  setTimeout(() => {
+    chrome.notifications.clear(NOTIFICATION_ID + type);
+  }, time);
+}
+
+chrome.runtime.onMessage.addListener((message) => {
+  switch (message.type) {
+    case 'COPY':
+      sendNotification('copy', message.payload + ' copied');
+      clearNotification('copy');
+      break;
+  }
+});

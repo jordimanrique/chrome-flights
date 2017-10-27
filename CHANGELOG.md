@@ -1,6 +1,25 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2017-10-21
+### Added
+- injected script in web page to control ajax responses.
+- copy text functionality in result boxes, highlighted as blue text.
+- chrome notifications functionality.
+- notifications are showed when copy text function is triggered.
+- Price lines link in results boxes.
+- Link to combinationId Api Transport
+- Active Info functionality in popup view.
+
+### Changed
+- change long-running extension (background persistent) to page Event.
+- fix hidden menu behaviour.
+- fix package priceLines transform.
+
+### Removed
+- html title attribute info in results boxes.
+- webRequest dependency.
+
 ## [0.2.2] - 2017-10-15
 ### Changed
 - Fix get storage chrome extension.

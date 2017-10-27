@@ -4,7 +4,8 @@ module.exports = {
   entry: {
     background: './src/background.js',
     popup: './src/popup.js',
-    contentScript: './src/contentScript.js'
+    contentScript: './src/contentScript.js',
+    ajaxListener: './src/ajaxListener.js'
   },
   output: {
     path: path.resolve(__dirname, 'dist/js'),

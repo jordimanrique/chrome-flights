@@ -60,30 +60,90 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 3:
+/******/ ([
+/* 0 */,
+/* 1 */,
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var TRANSPORT_TYPE = 'TRANSPORT';
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
+var _DataTransformer = __webpack_require__(3);
+
+var _DataTransformer2 = _interopRequireDefault(_DataTransformer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TRANSPORT_TYPE = 'TRANSPORT';
 var storage = chrome.storage.local;
 
 function getAndShowResults(callback) {
   storage.get('results', function (items) {
     var flightResults = items.results && items.results.flightResults;
-    processResultsBoxes(flightResults);
-    callback();
+    var combinationLink = items.results.data.search_request._links.combinations.replace('http://', 'https://');
+
+    addInfoToResultsBoxes(flightResults, combinationLink);
+
+    if (callback) {
+      callback();
+    }
   });
 }
 
-function showTransportInfo(combinationId, transportId) {
+function addInfoToResultsBoxes(flightResults, combinationLink) {
+  if (!flightResults) {
+    alert('Atrapalo Flights: No Results found');
+    return;
+  }
+
+  //Prevent unique boxes info.
+  $('.chrome-flights__box').remove();
+
+  //Set info in Combinations Boxes
+  $('article[data-combination-id]').each(function () {
+    var combinationId = $(this).data('combination-id');
+    var data = flightResults[combinationId];
+
+    if (data) {
+      $(this).addClass('chrome-flights__' + data.type);
+      $(this).prepend('<div class="chrome-flights__box hidden" style="background:' + getColor(data.type) + ';padding:4px 12px;">\n            ' + ('[' + data.type + '] [CombinationId:<a style="color:cornflowerblue" target="_blank" href="' + (combinationLink + '?identity=' + combinationId) + '">' + combinationId + '</a>]') + '\n        </div>');
+
+      //Set info in Transports
+      $(this).find('div.info-track').each(function () {
+        var id = $(this).attr('id');
+        var transportData = flightResults[combinationId][id];
+        if (transportData) {
+          $(this).before('<div style="position:relative;">\n                        <div class="chrome-flights__box hidden"\n                             data-combination-id = "' + combinationId + '"\n                             data-id = "' + transportData.id + '"\n                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:' + getColor(transportData.type) + ';padding:2px 12px;font-size:10px;">\n                            ' + ('[' + transportData.provider + '] [' + transportData.plating_carrier + '] <span class="chrome-flights-copy">' + (transportData.package_identity ? transportData.package_identity : transportData.id) + '</span>') + ' \n                            <a href="#" class="chrome-flights__box-priceline" style="float:right;color:cornflowerblue;">[Price Lines]</a>\n                        </div>\n                    </div>');
+
+          $(this).parent().find('.chrome-flights__box-priceline').click(function (e) {
+            e.preventDefault();
+            showPriceLinesInfo($(this).parent().data('combination-id'), $(this).parent().data('id'));
+          });
+        }
+      });
+
+      $('.chrome-flights-copy').on('dblclick', function () {
+        copyToClipboard($(this));
+      }).css('color', 'cornflowerblue').css('cursor', 'pointer');
+    }
+  });
+}
+
+function getColor(transportType) {
+  if (transportType === TRANSPORT_TYPE) {
+    return 'rgba(100, 149, 237, 0.2)';
+  }
+
+  return 'rgba(46, 188, 30, 0.2)';
+}
+
+function showPriceLinesInfo(combinationId, transportId) {
   storage.get('results', function (items) {
     var flightResults = items.results && items.results.flightResults;
     var data = flightResults[combinationId][transportId];
@@ -96,10 +156,14 @@ function showTransportInfo(combinationId, transportId) {
       var lines = priceLines[type];
 
       rows += lines.reduce(function (prev, priceLine) {
+        var _priceLine$split = priceLine.split('|'),
+            _priceLine$split2 = _slicedToArray(_priceLine$split, 4),
+            price = _priceLine$split2[0],
+            currency = _priceLine$split2[1],
+            quantity = _priceLine$split2[2],
+            paymentMethod = _priceLine$split2[3];
 
-        priceLine = priceLine.split('|');
-
-        return prev + '\n                    <tr>\n                        <td style="padding: 2px 5px;">' + type + '</td>\n                        <td style="padding: 2px 5px; white-space: nowrap;">' + priceLine[0] + '</td>\n                        <td style="padding: 2px 5px;">' + priceLine[1] + '</td>\n                        <td style="padding: 2px 5px;">' + priceLine[2] + '</td>\n                    </tr>\n           ';
+        return prev + '\n                    <tr>\n                        <td style="padding: 2px 5px;">' + type + '</td>\n                        <td style="padding: 2px 5px; white-space: nowrap;">' + price + ' ' + currency + '</td>\n                        <td style="padding: 2px 5px;">' + quantity + '</td>\n                        <td style="padding: 2px 5px;">' + paymentMethod + '</td>\n                    </tr>\n           ';
       }, '');
     });
 
@@ -116,12 +180,13 @@ function toggleInfo() {
     getAndShowResults(function () {
       $('div.chrome-flights__box').removeClass('hidden');
     });
+  } else {
+    boxes.toggleClass('hidden');
   }
-  boxes.toggleClass('hidden');
   $('#chrome-flights-menu-info').toggleClass('button-atrapalo--white-bg');
 }
 
-function showOnly(type) {
+function showBoxesByType(type) {
   switch (type) {
     case 'packages':
       $('.chrome-flights__PACKAGE').removeClass('hidden');
@@ -147,32 +212,44 @@ function showOnly(type) {
   }
 }
 
-function showMenu() {
-  $('#chrome-flights-menu').toggleClass('hidden');
-  // setTimeout(function () {
-  //   $('#chrome-flights-menu').addClass('hidden');
-  // }, 5000);
+function initMenu() {
+  //Reset menu
+  $('#chrome-flights-menu').remove();
+
+  $('header#header').append('<div id="chrome-flights-menu" class="hidden" style="position:fixed; top: 5px; left: 50%; transform: translateX(-50%); z-index:100">\n      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-info">Info</button>\n      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-packages">Packages</button>\n      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-transports">Transports</button>\n      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo button-atrapalo--white-bg" id="chrome-flights-menu-all">All</button>\n  </div>');
+
+  //Events
+  $('header#header').off('dblclick').dblclick(function () {
+    $('#chrome-flights-menu').toggleClass('hidden');
+  });
+
+  $('#chrome-flights-menu-info').click(function () {
+    toggleInfo();
+  });
+
+  $('#chrome-flights-menu-packages').click(function () {
+    showBoxesByType('packages');
+  });
+
+  $('#chrome-flights-menu-transports').click(function () {
+    showBoxesByType('transports');
+  });
+
+  $('#chrome-flights-menu-all').click(function () {
+    showBoxesByType('all');
+  });
 }
 
-$('header#header').append('<div id="chrome-flights-menu" class="hidden" style="position:fixed; top: 5px; left: 50%; transform: translateX(-50%); z-index:100">\n      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-info">Info</button>\n      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-packages">Packages</button>\n      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo" id="chrome-flights-menu-transports">Transports</button>\n      <button style="height:25px; line-height: 0; margin:0" class="button-atrapalo button-atrapalo--white-bg" id="chrome-flights-menu-all">All</button>\n  </div>').dblclick(function () {
-  showMenu();
-});
+function copyToClipboard(element) {
+  var $temp = $("<input>");
+  $("body").append($temp);
+  var text = $(element).text();
+  $temp.val(text).select();
+  document.execCommand("copy");
+  $temp.remove();
 
-$('#chrome-flights-menu-info').click(function () {
-  toggleInfo();
-});
-
-$('#chrome-flights-menu-packages').click(function () {
-  showOnly('packages');
-});
-
-$('#chrome-flights-menu-transports').click(function () {
-  showOnly('transports');
-});
-
-$('#chrome-flights-menu-all').click(function () {
-  showOnly('all');
-});
+  chrome.runtime.sendMessage({ type: 'COPY', payload: text });
+}
 
 chrome.runtime.onMessage.addListener(function (message) {
   switch (message.type) {
@@ -182,65 +259,155 @@ chrome.runtime.onMessage.addListener(function (message) {
           toggleInfo();
           break;
         case 'only-packages':
-          showOnly('packages');
+          showBoxesByType('packages');
           break;
         case 'only-transports':
-          showOnly('transports');
+          showBoxesByType('transports');
           break;
         case 'show-all':
-          showOnly('all');
+          showBoxesByType('all');
           break;
       }
   }
 });
 
-function processResultsBoxes(flightResults) {
-  if (!flightResults) {
-    alert('Atrapalo Flights: No Results found');
-    return;
+var s = document.createElement('script');
+s.src = chrome.extension.getURL('js/ajaxListener.js');
+s.onload = function () {
+  this.remove();
+};
+
+(document.head || document.documentElement).appendChild(s);
+
+document.addEventListener('NEW_RESULTS', function (event) {
+  var data = event.detail;
+  data = new _DataTransformer2.default().transform(data);
+
+  storage.set({ 'results': data }, function () {
+    initMenu();
+
+    storage.get({ 'showInfoActive': false }, function (item) {
+      if (item.showInfoActive === true) {
+        toggleInfo();
+      }
+    });
+  });
+});
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TRANSPORT_TYPE = 'TRANSPORT';
+
+var DataTransformer = function () {
+  function DataTransformer() {
+    _classCallCheck(this, DataTransformer);
   }
 
-  //Prevent unique boxes info.
-  $('.chrome-flights__box').remove();
+  _createClass(DataTransformer, [{
+    key: 'transform',
+    value: function transform(data) {
+      var flightResults = function (combinations) {
+        return combinations.reduce(function (prev, combination) {
+          var identity = combination.identity;
+          var type = combination.type === TRANSPORT_TYPE ? 'transports' : 'packages';
+          prev[identity] = {
+            type: combination.type
+          };
 
-  //Set info in Combinations Boxes
-  $('article[data-combination-id]').each(function () {
-    var combinationId = $(this).data('combination-id');
-    var data = flightResults[combinationId];
+          if (type === 'packages') {
+            combination[type].forEach(function (_package) {
+              var transports = _package.transports;
+              Object.keys(transports).forEach(function (key) {
+                transports[key].forEach(function (transport) {
+                  prev[identity][transport.id] = {
+                    provider: transport.provider,
+                    id: transport.id,
+                    package_identity: _package.identity,
+                    type: combination.type,
+                    plating_carrier: transport.plating_carrier,
+                    price_lines: transformPriceLines(_package.price_lines)
+                  };
+                });
+              });
+            });
 
-    if (data) {
-      var title = '[' + data.type + '] [CombinationId] ' + combinationId;
-      $(this).attr('title', title);
-      $(this).addClass('chrome-flights__' + data.type);
-      $(this).prepend('<div class="chrome-flights__box hidden" style="background:' + getColor(data.type) + ';padding:4px 12px;">\n                    ' + title + '\n                </div>');
+            return prev;
+          }
 
-      //Set info in Transports
-      $(this).find('div.info-track').each(function () {
-        var id = $(this).attr('id');
-        var transportData = flightResults[combinationId][id];
-        if (transportData) {
-          var _title = '[' + transportData.provider + '] [' + transportData.plating_carrier + '] ' + transportData.id + ' ';
-          $(this).attr('title', _title);
-
-          $(this).before('<div style="position:relative;">\n                        <div class="chrome-flights__box hidden"\n                             data-combination-id = "' + combinationId + '"\n                             data-id = "' + transportData.id + '"\n                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:' + getColor(transportData.type) + ';padding:2px 12px;font-size:10px;cursor:pointer;">\n                            ' + _title + '\n                        </div>\n                    </div>');
-
-          $(this).parent().find('.chrome-flights__box').click(function () {
-            showTransportInfo($(this).data('combination-id'), $(this).data('id'));
+          Object.keys(combination[type]).forEach(function (key) {
+            combination[type][key].forEach(function (transport) {
+              prev[identity][transport.id] = {
+                provider: transport.provider,
+                id: transport.id,
+                type: combination.type,
+                plating_carrier: transport.plating_carrier,
+                price_lines: transformPriceLines(transport.price_lines)
+              };
+            });
           });
-        }
-      });
+
+          return prev;
+        }, {});
+      }(data.data.combinations);
+
+      return _extends({}, data, { flightResults: flightResults });
+    }
+  }]);
+
+  return DataTransformer;
+}();
+
+function reduceToUniquePriceLines(priceLines) {
+  var uniqueLines = [];
+  var tempLines = {};
+
+  priceLines.forEach(function (priceLine) {
+    var key = '' + priceLine.price.amount + priceLine.price.currency + priceLine.type + (priceLine.payment_method ? priceLine.payment_method : '');
+
+    if (tempLines[key]) {
+      tempLines[key] = _extends({}, priceLine, { quantity: tempLines[key].quantity += priceLine.quantity });
+    } else {
+      tempLines[key] = _extends({}, priceLine);
     }
   });
+
+  Object.keys(tempLines).forEach(function (key) {
+    uniqueLines.push(tempLines[key]);
+  });
+
+  return uniqueLines;
 }
 
-function getColor(transportType) {
-  if (transportType === TRANSPORT_TYPE) {
-    return 'rgba(100, 149, 237, 0.2)';
-  }
+function transformPriceLines(priceLines) {
+  var lines = {};
 
-  return 'rgba(46, 188, 30, 0.2)';
+  reduceToUniquePriceLines(priceLines).forEach(function (line) {
+    if (!lines[line.type]) {
+      lines[line.type] = [];
+    }
+
+    lines[line.type].push(line.price.amount + '|' + line.price.currency + '|' + line.quantity + '|' + (line.payment_method ? line.payment_method : ''));
+  });
+
+  return lines;
 }
+
+exports.default = DataTransformer;
 
 /***/ })
-
-/******/ });
+/******/ ]);
