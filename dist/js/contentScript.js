@@ -285,7 +285,12 @@ document.addEventListener('NEW_RESULTS', function (event) {
 
   storage.set({ 'results': data }, function () {
     initMenu();
-    // toggleInfo();
+
+    storage.get({ 'showInfoActive': false }, function (item) {
+      if (item.showInfoActive === true) {
+        toggleInfo();
+      }
+    });
   });
 });
 

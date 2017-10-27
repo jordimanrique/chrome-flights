@@ -2,31 +2,43 @@ const storage = chrome.storage.local;
 const manifest = chrome.runtime.getManifest();
 const version = manifest.version;
 
+let infoActive = false;
+
+storage.get(['results', 'showInfoActive'], (items) => {
+    const data = items.results.data;
+    window.data = items.results;
+    infoActive = items.showInfoActive;
+    renderView(data, infoActive);
+});
+
 chrome.storage.onChanged.addListener((changes) => {
+
+  if (changes.showInfoActive) {
+    infoActive = changes.showInfoActive.newValue;
+  }
+
   if (changes.results) {
     const data = changes.results.newValue.data;
     window.data = changes.results.newValue;
-    renderView(data);
+    renderView(data, infoActive);
   }
-});
-
-storage.get('results', (items) => {
-  const data = items.results.data;
-  window.data = items.results;
-  renderView(data);
 });
 
 /*
  VIEWS
  */
 
-function renderView(data) {
+function showInfoActive(active) {
+  storage.set({'showInfoActive': active});
+}
+
+function renderView(data, active = false) {
   if (!data) {
     return;
   }
 
   $(document).ready(function () {
-    const {view, total, version} = generateViewFromData(data);
+    const {view, total, version} = generateViewFromData(data, active);
     $('#container').html(view);
     $('#total').html(total);
     $('#version').html(version);
@@ -35,10 +47,14 @@ function renderView(data) {
     setTimeout(function () {
       $('#container').css("border", "solid 1px transparent");
     }, 100);
+
+    $('#show-info-active').change(function () {
+        showInfoActive($(this).is(":checked"));
+    });
   });
 }
 
-function generateViewFromData(data) {
+function generateViewFromData(data, active) {
   const {search_request: searchRequest, application_request: applicationRequest} = data;
   const status = searchRequest.status;
   const _links = searchRequest._links;
@@ -135,6 +151,12 @@ function generateViewFromData(data) {
                               </tr>
                           </table>
                           ${statusBox}
+                          <div class="form-check">
+                            <label class="form-check-label">
+                              <input type="checkbox" id="show-info-active" class="form-check-input" ${ active === true ? 'checked' : ''}/>
+                              Active info in results page
+                            </label>
+                          </div>
                         </div>
                         <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                           <table class="table table-hover table-sm">

@@ -232,6 +232,11 @@ document.addEventListener('NEW_RESULTS', (event) => {
 
   storage.set({'results': data}, () => {
     initMenu();
-    // toggleInfo();
+
+    storage.get({'showInfoActive' : false}, (item) => {
+      if (item.showInfoActive === true) {
+        toggleInfo();
+      }
+    });
   });
 });
