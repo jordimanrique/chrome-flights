@@ -16,6 +16,29 @@ function getAndShowResults(callback) {
   });
 }
 
+function getBoxProvider(flightResults) {
+
+  let tempList = {};
+
+  Object.keys(flightResults).forEach(function(combinationId) {
+
+    tempList[combinationId] = Object.keys(flightResults[combinationId]).reduce(function (previous, current) {
+
+      if (current !== 'type' && previous !== '') {
+        let previousProvider = flightResults[combinationId][previous].provider;
+        let currentProvider = flightResults[combinationId][current].provider;
+
+        return previousProvider !== currentProvider ? '':current;
+      }
+
+      return previous === '' ? previous:flightResults[combinationId][previous].provider;
+    });
+
+  });
+
+  return tempList;
+}
+
 function addInfoToResultsBoxes(flightResults, combinationLink) {
   if (!flightResults) {
     alert('Atrapalo Flights: No Results found');
@@ -37,18 +60,13 @@ function addInfoToResultsBoxes(flightResults, combinationLink) {
             ${`[${data.type}] [CombinationId:<a style="color:cornflowerblue" target="_blank" href="${combinationLink + '?identity=' + combinationId}">${combinationId}</a>]`}
         </div>`);
 
-      let provider = '';
+      let providerList = getBoxProvider(flightResults);
 
       //Set info in Transports
       $(this).find('div.info-track').each(function () {
         const id = $(this).attr('id');
         const transportData = flightResults[combinationId][id];
         if (transportData) {
-          if (provider !== '' && provider !== transportData.provider) {
-            provider = '';
-          } else {
-            provider = transportData.provider;
-          }
           $(this).before(
             `<div style="position:relative;">
                         <div class="chrome-flights__box hidden"
@@ -67,8 +85,8 @@ function addInfoToResultsBoxes(flightResults, combinationLink) {
         }
       });
 
-      if (provider !== '') {
-        $(this).addClass(`chrome-flights__${provider}`);
+      if (providerList[combinationId] !== null) {
+        $(this).addClass(`chrome-flights__${providerList[combinationId]}`);
       }
 
       $('.chrome-flights-copy').on('dblclick', function() {
@@ -168,9 +186,13 @@ function showBoxesByType(type) {
 
 function showBoxesByProvider() {
 
-  storage.get('provider', (element) => {
-    // TODO show or hide provider boxes
-    console.log('show ' + element.provider);
+  storage.get({'showInfoActive' : false}, (item) => {
+    if (item.showInfoActive === true) {
+      storage.get('provider', (element) => {
+        $('article[data-combination-id]').removeClass('hidden');
+        $(`article[data-combination-id]:not(.chrome-flights__${element.provider})`).addClass('hidden');
+      });
+    }
   });
 }
 
@@ -257,6 +279,11 @@ document.addEventListener('NEW_RESULTS', (event) => {
 
   storage.set({'results': data}, () => {
     initMenu();
-    // toggleInfo();
+
+    storage.get({'showInfoActive' : false}, (item) => {
+      if (item.showInfoActive === true) {
+        toggleInfo();
+      }
+    });
   });
 });

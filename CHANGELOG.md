@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 - chrome notifications functionality.
 - notifications are showed when copy text function is triggered.
 - Price lines link in results boxes.
+- Link to combinationId Api Transport
+- Active Info functionality in popup view.
 
 ### Changed
 - change long-running extension (background persistent) to page Event.

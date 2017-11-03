@@ -96,6 +96,28 @@ function getAndShowResults(callback) {
   });
 }
 
+function getBoxProvider(flightResults) {
+
+  var tempList = {};
+
+  Object.keys(flightResults).forEach(function (combinationId) {
+
+    tempList[combinationId] = Object.keys(flightResults[combinationId]).reduce(function (previous, current) {
+
+      if (current !== 'type' && previous !== '') {
+        var previousProvider = flightResults[combinationId][previous].provider;
+        var currentProvider = flightResults[combinationId][current].provider;
+
+        return previousProvider !== currentProvider ? '' : current;
+      }
+
+      return previous === '' ? previous : flightResults[combinationId][previous].provider;
+    });
+  });
+
+  return tempList;
+}
+
 function addInfoToResultsBoxes(flightResults, combinationLink) {
   if (!flightResults) {
     alert('Atrapalo Flights: No Results found');
@@ -114,18 +136,13 @@ function addInfoToResultsBoxes(flightResults, combinationLink) {
       $(this).addClass('chrome-flights__' + data.type);
       $(this).prepend('<div class="chrome-flights__box hidden" style="background:' + getColor(data.type) + ';padding:4px 12px;">\n            ' + ('[' + data.type + '] [CombinationId:<a style="color:cornflowerblue" target="_blank" href="' + (combinationLink + '?identity=' + combinationId) + '">' + combinationId + '</a>]') + '\n        </div>');
 
-      var provider = '';
+      var providerList = getBoxProvider(flightResults);
 
       //Set info in Transports
       $(this).find('div.info-track').each(function () {
         var id = $(this).attr('id');
         var transportData = flightResults[combinationId][id];
         if (transportData) {
-          if (provider !== '' && provider !== transportData.provider) {
-            provider = '';
-          } else {
-            provider = transportData.provider;
-          }
           $(this).before('<div style="position:relative;">\n                        <div class="chrome-flights__box hidden"\n                             data-combination-id = "' + combinationId + '"\n                             data-id = "' + transportData.id + '"\n                             style="position:absolute; top:0; right:0; left:0; z-index:1;background:' + getColor(transportData.type) + ';padding:2px 12px;font-size:10px;">\n                            ' + ('[' + transportData.provider + '] [' + transportData.plating_carrier + '] <span class="chrome-flights-copy">' + (transportData.package_identity ? transportData.package_identity : transportData.id) + '</span>') + ' \n                            <a href="#" class="chrome-flights__box-priceline" style="float:right;color:cornflowerblue;">[Price Lines]</a>\n                        </div>\n                    </div>');
 
           $(this).parent().find('.chrome-flights__box-priceline').click(function (e) {
@@ -135,8 +152,8 @@ function addInfoToResultsBoxes(flightResults, combinationLink) {
         }
       });
 
-      if (provider !== '') {
-        $(this).addClass('chrome-flights__' + provider);
+      if (providerList[combinationId] !== null) {
+        $(this).addClass('chrome-flights__' + providerList[combinationId]);
       }
 
       $('.chrome-flights-copy').on('dblclick', function () {
@@ -228,9 +245,13 @@ function showBoxesByType(type) {
 
 function showBoxesByProvider() {
 
-  storage.get('provider', function (element) {
-    // TODO show or hide provider boxes
-    console.log('show ' + element.provider);
+  storage.get({ 'showInfoActive': false }, function (item) {
+    if (item.showInfoActive === true) {
+      storage.get('provider', function (element) {
+        $('article[data-combination-id]').removeClass('hidden');
+        $('article[data-combination-id]:not(.chrome-flights__' + element.provider + ')').addClass('hidden');
+      });
+    }
   });
 }
 
@@ -310,7 +331,12 @@ document.addEventListener('NEW_RESULTS', function (event) {
 
   storage.set({ 'results': data }, function () {
     initMenu();
-    // toggleInfo();
+
+    storage.get({ 'showInfoActive': false }, function (item) {
+      if (item.showInfoActive === true) {
+        toggleInfo();
+      }
+    });
   });
 });
 
