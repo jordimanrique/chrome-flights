@@ -141,10 +141,12 @@ function initEvents() {
 
     var currentTarget = event.currentTarget;
 
-    if (isSuccess(currentTarget) || isInfo(currentTarget)) {
-
+    if (isSuccess(currentTarget)) {
       saveProvider(currentTarget.innerHTML);
-      clickProvider(currentTarget);
+      changeProviderClass(currentTarget);
+    } else if (isInfo(currentTarget)) {
+      saveProvider('');
+      changeProviderClass(currentTarget);
     }
   });
 }
@@ -210,7 +212,7 @@ function saveProvider(provider) {
   });
 }
 
-function clickProvider(providerElement) {
+function changeProviderClass(providerElement) {
 
   providerElement.classList.toggle('badge-info');
   providerElement.classList.toggle('badge-success');

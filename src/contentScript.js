@@ -189,8 +189,12 @@ function showBoxesByProvider() {
   storage.get({'showInfoActive' : false}, (item) => {
     if (item.showInfoActive === true) {
       storage.get('provider', (element) => {
+
         $('article[data-combination-id]').removeClass('hidden');
-        $(`article[data-combination-id]:not(.chrome-flights__${element.provider})`).addClass('hidden');
+
+        if (element.provider !== '') {
+          $(`article[data-combination-id]:not(.chrome-flights__${element.provider})`).addClass('hidden');
+        }
       });
     }
   });
