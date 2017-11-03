@@ -60,9 +60,22 @@ function initEvents() {
 
   $('.badge').on('click', function(event) {
 
-    saveProvider(event.currentTarget.innerHTML);
+    let currentTarget = event.currentTarget;
 
+    if (isSuccess(currentTarget) || isInfo(currentTarget)) {
+
+      saveProvider(currentTarget.innerHTML);
+      clickProvider(currentTarget);
+    }
   });
+}
+
+function isSuccess(element) {
+  return element.classList.contains('badge-success');
+}
+
+function isInfo(element) {
+  return element.classList.contains('badge-info');
 }
 
 function generateViewFromData(data, active) {
@@ -201,6 +214,13 @@ function saveProvider(provider) {
         payload: 'show-provider'
       })
     });
+}
+
+function clickProvider(providerElement) {
+
+  providerElement.classList.toggle('badge-info');
+  providerElement.classList.toggle('badge-success');
+
 }
 
 function sendMessage(message) {
