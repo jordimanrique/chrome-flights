@@ -76,11 +76,13 @@ var manifest = chrome.runtime.getManifest();
 var version = manifest.version;
 
 var infoActive = false;
+var infoShown = false;
 
-storage.get(['results', 'showInfoActive'], function (items) {
+storage.get(['results', 'showInfoActive', 'infoShown'], function (items) {
   var data = items.results.data;
   window.data = items.results;
   infoActive = items.showInfoActive;
+  infoShown = items.infoShown;
   renderView(data, infoActive);
 });
 
@@ -94,6 +96,10 @@ chrome.storage.onChanged.addListener(function (changes) {
     var data = changes.results.newValue.data;
     window.data = changes.results.newValue;
     renderView(data, infoActive);
+  }
+
+  if (changes.infoShown) {
+    infoShown = changes.infoShown.newValue;
   }
 });
 
@@ -141,15 +147,17 @@ function initEvents() {
 
   $('.badge').on('click', function (event) {
 
-    var currentTarget = event.currentTarget;
+    if (infoShown) {
+      var currentTarget = event.currentTarget;
 
-    if (isSuccess(currentTarget)) {
-      saveProvider(currentTarget.innerHTML);
-      changeToSuccessAllProviders();
-      changeCurrentProviderClass(currentTarget);
-    } else if (isInfo(currentTarget)) {
-      saveProvider('');
-      changeCurrentProviderClass(currentTarget);
+      if (isSuccess(currentTarget)) {
+        saveProvider(currentTarget.innerHTML);
+        changeToSuccessAllProviders();
+        changeCurrentProviderClass(currentTarget);
+      } else if (isInfo(currentTarget)) {
+        saveProvider('');
+        changeCurrentProviderClass(currentTarget);
+      }
     }
   });
 }

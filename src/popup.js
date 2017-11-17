@@ -3,11 +3,13 @@ const manifest = chrome.runtime.getManifest();
 const version = manifest.version;
 
 let infoActive = false;
+let infoShown = false;
 
-storage.get(['results', 'showInfoActive'], (items) => {
+storage.get(['results', 'showInfoActive', 'infoShown'], (items) => {
     const data = items.results.data;
     window.data = items.results;
     infoActive = items.showInfoActive;
+    infoShown = items.infoShown;
     renderView(data, infoActive);
 });
 
@@ -21,6 +23,10 @@ chrome.storage.onChanged.addListener((changes) => {
     const data = changes.results.newValue.data;
     window.data = changes.results.newValue;
     renderView(data, infoActive);
+  }
+
+  if (changes.infoShown) {
+    infoShown = changes.infoShown.newValue;
   }
 });
 
@@ -62,15 +68,17 @@ function initEvents() {
 
   $('.badge').on('click', function(event) {
 
-    let currentTarget = event.currentTarget;
+    if (infoShown) {
+      let currentTarget = event.currentTarget;
 
-    if (isSuccess(currentTarget)) {
-      saveProvider(currentTarget.innerHTML);
-      changeToSuccessAllProviders();
-      changeCurrentProviderClass(currentTarget);
-    } else if(isInfo(currentTarget)) {
-      saveProvider('');
-      changeCurrentProviderClass(currentTarget);
+      if (isSuccess(currentTarget)) {
+        saveProvider(currentTarget.innerHTML);
+        changeToSuccessAllProviders();
+        changeCurrentProviderClass(currentTarget);
+      } else if (isInfo(currentTarget)) {
+        saveProvider('');
+        changeCurrentProviderClass(currentTarget);
+      }
     }
   });
 }

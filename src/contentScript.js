@@ -149,8 +149,10 @@ function toggleInfo() {
     getAndShowResults(function () {
       $('div.chrome-flights__box').removeClass('hidden');
     });
+    storage.set({'infoShown': true});
   } else {
     boxes.toggleClass('hidden');
+    storage.set({'infoShown': false});
   }
   $('#chrome-flights-menu-info').toggleClass('button-atrapalo--white-bg');
 }
