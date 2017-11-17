@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - select provider in search results
 - enable/disable with only one click
+- enable/disable provider selection when combination info is shown
 
 ## [0.3.0] - 2017-10-21
 ### Added
