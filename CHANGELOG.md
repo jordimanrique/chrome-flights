@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2017-11-17
+### Added
+- select provider in search results
+- enable/disable with only one click
+
 ## [0.3.0] - 2017-10-21
 ### Added
 - injected script in web page to control ajax responses.
