@@ -289,5 +289,7 @@ document.addEventListener('NEW_RESULTS', (event) => {
         toggleInfo();
       }
     });
+
+    storage.set({'provider': ''});
   });
 });

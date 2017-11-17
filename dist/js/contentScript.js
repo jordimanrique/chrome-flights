@@ -341,6 +341,8 @@ document.addEventListener('NEW_RESULTS', function (event) {
         toggleInfo();
       }
     });
+
+    storage.set({ 'provider': '' });
   });
 });
 

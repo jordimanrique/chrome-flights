@@ -52,6 +52,8 @@ function renderView(data, active = false) {
         showInfoActive($(this).is(":checked"));
     });
 
+    enableSelectedProvider();
+
     initEvents();
   });
 }
@@ -64,11 +66,11 @@ function initEvents() {
 
     if (isSuccess(currentTarget)) {
       saveProvider(currentTarget.innerHTML);
-      changeProviderClass(currentTarget);
-
+      changeToSuccessAllProviders();
+      changeCurrentProviderClass(currentTarget);
     } else if(isInfo(currentTarget)) {
       saveProvider('');
-      changeProviderClass(currentTarget);
+      changeCurrentProviderClass(currentTarget);
     }
   });
 }
@@ -219,11 +221,38 @@ function saveProvider(provider) {
     });
 }
 
-function changeProviderClass(providerElement) {
+function enableSelectedProvider() {
+
+  storage.get('provider', (element) => {
+    if (element.provider !== '') {
+
+      var providerList = $('.badge:not(.badge-secondary)');
+
+      $.each(providerList, function(index, providerElement) {
+        if (providerElement.innerHTML === element.provider) {
+          changeCurrentProviderClass(providerElement);
+        }
+      });
+    }
+  });
+}
+
+function changeCurrentProviderClass(providerElement) {
 
   providerElement.classList.toggle('badge-info');
   providerElement.classList.toggle('badge-success');
 
+}
+
+function changeToSuccessAllProviders() {
+
+  var providerList = $('.badge:not(.badge-secondary)');
+
+  $.each(providerList, function(index, providerElement) {
+    if (isInfo(providerElement)) {
+      changeCurrentProviderClass(providerElement);
+    }
+  })
 }
 
 function sendMessage(message) {
