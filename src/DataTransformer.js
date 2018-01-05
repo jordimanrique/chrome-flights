@@ -7,12 +7,15 @@ class DataTransformer {
                 const identity = combination.identity;
                 const type = combination.type === TRANSPORT_TYPE ? 'transports' : 'packages';
                 prev[identity] = {
-                    type: combination.type
+                    type: combination.type,
+                    uniqueProviders: {}
                 };
 
                 if (type === 'packages') {
                     combination[type].forEach((_package) => {
                         let transports = _package.transports;
+                        prev[identity].uniqueProviders[_package.provider] = true;
+
                         Object.keys(transports).forEach((key) => {
                             transports[key].forEach((transport) => {
                                 prev[identity][transport.id] = {
@@ -27,11 +30,14 @@ class DataTransformer {
                         });
                     });
 
+                    prev[identity].uniqueProviders = Object.keys(prev[identity].uniqueProviders);
+
                     return prev;
                 }
 
                 Object.keys(combination[type]).forEach((key) => {
                     combination[type][key].forEach((transport) => {
+                        prev[identity].uniqueProviders[transport.provider] = true;
                         prev[identity][transport.id] = {
                             provider: transport.provider,
                             id: transport.id,
@@ -41,6 +47,8 @@ class DataTransformer {
                         };
                     });
                 });
+
+                prev[identity].uniqueProviders = Object.keys(prev[identity].uniqueProviders);
 
                 return prev;
             }, {});
@@ -85,5 +93,4 @@ function transformPriceLines(priceLines) {
     return lines;
 }
 
-export default DataTransformer;
 export default DataTransformer;
