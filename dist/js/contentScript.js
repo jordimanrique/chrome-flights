@@ -96,28 +96,6 @@ function getAndShowResults(callback) {
   });
 }
 
-function getBoxProvider(flightResults) {
-
-  var tempList = {};
-
-  Object.keys(flightResults).forEach(function (combinationId) {
-
-    tempList[combinationId] = Object.keys(flightResults[combinationId]).reduce(function (previous, current) {
-
-      if (current !== 'type' && previous !== '') {
-        var previousProvider = flightResults[combinationId][previous].provider;
-        var currentProvider = flightResults[combinationId][current].provider;
-
-        return previousProvider !== currentProvider ? '' : current;
-      }
-
-      return previous === '' ? previous : flightResults[combinationId][previous].provider;
-    });
-  });
-
-  return tempList;
-}
-
 function addInfoToResultsBoxes(flightResults, combinationLink) {
   if (!flightResults) {
     alert('Atrapalo Flights: No Results found');
@@ -136,8 +114,6 @@ function addInfoToResultsBoxes(flightResults, combinationLink) {
       $(this).addClass('chrome-flights__' + data.type);
       $(this).prepend('<div class="chrome-flights__box hidden" style="background:' + getColor(data.type) + ';padding:4px 12px;">\n            ' + ('[' + data.type + '] [CombinationId:<a style="color:cornflowerblue" target="_blank" href="' + (combinationLink + '?identity=' + combinationId) + '">' + combinationId + '</a>]') + '\n        </div>');
 
-      var providerList = getBoxProvider(flightResults);
-
       //Set info in Transports
       $(this).find('div.info-track').each(function () {
         var id = $(this).attr('id');
@@ -152,8 +128,8 @@ function addInfoToResultsBoxes(flightResults, combinationLink) {
         }
       });
 
-      if (providerList[combinationId] !== null) {
-        $(this).addClass('chrome-flights__' + providerList[combinationId]);
+      if (flightResults[combinationId].uniqueProviders.length === 1) {
+        $(this).addClass('chrome-flights__' + flightResults[combinationId].uniqueProviders[0]);
       }
 
       $('.chrome-flights-copy').on('dblclick', function () {
@@ -381,7 +357,7 @@ var DataTransformer = function () {
                     var type = combination.type === TRANSPORT_TYPE ? 'transports' : 'packages';
                     prev[identity] = {
                         type: combination.type,
-                        providers: {}
+                        uniqueProviders: {}
                     };
 
                     if (type === 'packages') {
@@ -403,7 +379,7 @@ var DataTransformer = function () {
                             });
                         });
 
-                        prev[identity].uniqueProviders = Object.keys(prev[identity].provider);
+                        prev[identity].uniqueProviders = Object.keys(prev[identity].uniqueProviders);
 
                         return prev;
                     }
@@ -421,7 +397,7 @@ var DataTransformer = function () {
                         });
                     });
 
-                    prev[identity].uniqueProviders = Object.keys(prev[identity].provider);
+                    prev[identity].uniqueProviders = Object.keys(prev[identity].uniqueProviders);
 
                     return prev;
                 }, {});

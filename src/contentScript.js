@@ -16,29 +16,6 @@ function getAndShowResults(callback) {
   });
 }
 
-function getBoxProvider(flightResults) {
-
-  let tempList = {};
-
-  Object.keys(flightResults).forEach(function(combinationId) {
-
-    tempList[combinationId] = Object.keys(flightResults[combinationId]).reduce(function (previous, current) {
-
-      if (current !== 'type' && previous !== '') {
-        let previousProvider = flightResults[combinationId][previous].provider;
-        let currentProvider = flightResults[combinationId][current].provider;
-
-        return previousProvider !== currentProvider ? '':current;
-      }
-
-      return previous === '' ? previous:flightResults[combinationId][previous].provider;
-    });
-
-  });
-
-  return tempList;
-}
-
 function addInfoToResultsBoxes(flightResults, combinationLink) {
   if (!flightResults) {
     alert('Atrapalo Flights: No Results found');
@@ -59,8 +36,6 @@ function addInfoToResultsBoxes(flightResults, combinationLink) {
         `<div class="chrome-flights__box hidden" style="background:${getColor(data.type)};padding:4px 12px;">
             ${`[${data.type}] [CombinationId:<a style="color:cornflowerblue" target="_blank" href="${combinationLink + '?identity=' + combinationId}">${combinationId}</a>]`}
         </div>`);
-
-      let providerList = getBoxProvider(flightResults);
 
       //Set info in Transports
       $(this).find('div.info-track').each(function () {
@@ -85,8 +60,8 @@ function addInfoToResultsBoxes(flightResults, combinationLink) {
         }
       });
 
-      if (providerList[combinationId] !== null) {
-        $(this).addClass(`chrome-flights__${providerList[combinationId]}`);
+      if (flightResults[combinationId].uniqueProviders.length === 1) {
+        $(this).addClass(`chrome-flights__${flightResults[combinationId].uniqueProviders[0]}`);
       }
 
       $('.chrome-flights-copy').on('dblclick', function() {
