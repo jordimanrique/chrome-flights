@@ -3,11 +3,13 @@ const manifest = chrome.runtime.getManifest();
 const version = manifest.version;
 
 let infoActive = false;
+let infoShown = false;
 
-storage.get(['results', 'showInfoActive'], (items) => {
+storage.get(['results', 'showInfoActive', 'infoShown'], (items) => {
     const data = items.results.data;
     window.data = items.results;
     infoActive = items.showInfoActive;
+    infoShown = items.infoShown;
     renderView(data, infoActive);
 });
 
@@ -21,6 +23,10 @@ chrome.storage.onChanged.addListener((changes) => {
     const data = changes.results.newValue.data;
     window.data = changes.results.newValue;
     renderView(data, infoActive);
+  }
+
+  if (changes.infoShown) {
+    infoShown = changes.infoShown.newValue;
   }
 });
 
@@ -51,7 +57,38 @@ function renderView(data, active = false) {
     $('#show-info-active').change(function () {
         showInfoActive($(this).is(":checked"));
     });
+
+    enableSelectedProvider();
+
+    initEvents();
   });
+}
+
+function initEvents() {
+
+  $('.badge').on('click', function(event) {
+
+    if (infoShown) {
+      let currentTarget = event.currentTarget;
+
+      if (isSuccess(currentTarget)) {
+        saveProvider(currentTarget.innerHTML);
+        changeToSuccessAllProviders();
+        changeCurrentProviderClass(currentTarget);
+      } else if (isInfo(currentTarget)) {
+        saveProvider('');
+        changeCurrentProviderClass(currentTarget);
+      }
+    }
+  });
+}
+
+function isSuccess(element) {
+  return element.classList.contains('badge-success');
+}
+
+function isInfo(element) {
+  return element.classList.contains('badge-info');
 }
 
 function generateViewFromData(data, active) {
@@ -180,6 +217,59 @@ function generateViewFromData(data, active) {
     version,
     total
   };
+}
+
+function saveProvider(provider) {
+
+  storage.set({'provider': provider}, () => {
+      sendMessage({
+        type: 'COMMAND',
+        payload: 'show-provider'
+      })
+    });
+}
+
+function enableSelectedProvider() {
+
+  storage.get('provider', (element) => {
+    if (element.provider !== '') {
+
+      var providerList = $('.badge:not(.badge-secondary)');
+
+      $.each(providerList, function(index, providerElement) {
+        if (providerElement.innerHTML === element.provider) {
+          changeCurrentProviderClass(providerElement);
+        }
+      });
+    }
+  });
+}
+
+function changeCurrentProviderClass(providerElement) {
+
+  providerElement.classList.toggle('badge-info');
+  providerElement.classList.toggle('badge-success');
+
+}
+
+function changeToSuccessAllProviders() {
+
+  var providerList = $('.badge:not(.badge-secondary)');
+
+  $.each(providerList, function(index, providerElement) {
+    if (isInfo(providerElement)) {
+      changeCurrentProviderClass(providerElement);
+    }
+  })
+}
+
+function sendMessage(message) {
+  chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+    let lastTabId = tabs[0].id;
+    if (lastTabId) {
+      chrome.tabs.sendMessage(lastTabId, message);
+    }
+  });
 }
 
 function generateStatusBoxTable(status) {

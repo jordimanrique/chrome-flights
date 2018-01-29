@@ -74,56 +74,56 @@ var URL_RULE_PATH = '/vuelos/resultados_ajax';
 var NOTIFICATION_ID = 'atrapalo-flights-';
 
 chrome.runtime.onInstalled.addListener(function () {
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
-    chrome.declarativeContent.onPageChanged.addRules([{
-      conditions: [new chrome.declarativeContent.PageStateMatcher({
-        pageUrl: { urlContains: URL_RULE_PATH }
-      })],
-      actions: [new chrome.declarativeContent.ShowPageAction()]
-    }]);
-  });
+    chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
+        chrome.declarativeContent.onPageChanged.addRules([{
+            conditions: [new chrome.declarativeContent.PageStateMatcher({
+                pageUrl: { urlContains: URL_RULE_PATH }
+            })],
+            actions: [new chrome.declarativeContent.ShowPageAction()]
+        }]);
+    });
 });
 
 chrome.commands.onCommand.addListener(function (command) {
-  sendMessage({
-    type: 'COMMAND',
-    payload: command
-  });
+    sendMessage({
+        type: 'COMMAND',
+        payload: command
+    });
 });
 
 function sendMessage(message) {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    var lastTabId = tabs[0].id;
-    if (lastTabId) {
-      chrome.tabs.sendMessage(lastTabId, message);
-    }
-  });
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        var lastTabId = tabs[0].id;
+        if (lastTabId) {
+            chrome.tabs.sendMessage(lastTabId, message);
+        }
+    });
 }
 
 function sendNotification(type, message) {
-  chrome.notifications.create(NOTIFICATION_ID + type, {
-    type: "basic",
-    title: "Atrapalo Flights",
-    message: message,
-    iconUrl: "icons/aeroplane_128.png"
-  });
+    chrome.notifications.create(NOTIFICATION_ID + type, {
+        type: 'basic',
+        title: 'Atrapalo Flights',
+        message: message,
+        iconUrl: 'icons/aeroplane_128.png'
+    });
 }
 
 function clearNotification(type) {
-  var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2000;
+    var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2000;
 
-  setTimeout(function () {
-    chrome.notifications.clear(NOTIFICATION_ID + type);
-  }, time);
+    setTimeout(function () {
+        chrome.notifications.clear(NOTIFICATION_ID + type);
+    }, time);
 }
 
 chrome.runtime.onMessage.addListener(function (message) {
-  switch (message.type) {
-    case 'COPY':
-      sendNotification('copy', message.payload + ' copied');
-      clearNotification('copy');
-      break;
-  }
+    switch (message.type) {
+        case 'COPY':
+            sendNotification('copy', message.payload + ' copied');
+            clearNotification('copy');
+            break;
+    }
 });
 
 /***/ })
