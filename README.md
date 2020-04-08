@@ -1,5 +1,13 @@
 # chrome-flights
 
+## Update de plugin
+
+Execute in the command line
+
+    make run
+    
+And it will ask for you the command to run   
+
 ## API
     https://developer.chrome.com/extensions/api_index
 
@@ -11,17 +19,15 @@
 Watch mode for webpack
 
     npm run build:watch
-    yarn build:watch
     
 Create dist files
 
     npm run build
-    yarn build
     
 Testing
     
-    yarn test
-    yarn test:watch
+    npm test
+    npm test:watch
     
 ## Install the extension
 
